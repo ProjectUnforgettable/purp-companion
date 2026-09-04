@@ -18,7 +18,7 @@ function Progress({
     >
       {children}
       <ProgressTrack className="h-2.5 bg-white/10">
-        <ProgressIndicator className="bg-violet-400" />
+        <ProgressIndicator className="bg-orange-400" />
       </ProgressTrack>
     </ProgressPrimitive.Root>
   )

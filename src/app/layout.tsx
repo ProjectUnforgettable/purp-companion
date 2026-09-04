@@ -24,11 +24,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "PURP — Project Unforgettable",
+    default: "PURP | Project Unforgettable",
     template: "%s · PURP",
   },
   description:
-    "Mobile companion for the PURP FiveM RP server — status, rules, departments, and more.",
+    "Mobile companion for PURP | Project Unforgettable — status, rules, departments, and more.",
   applicationName: "PURP",
   appleWebApp: {
     capable: true,
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0614",
+  themeColor: "#0c0a08",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

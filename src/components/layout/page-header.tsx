@@ -22,7 +22,7 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b border-white/5 bg-[#0b0614]/85 backdrop-blur-xl",
+        "sticky top-0 z-40 border-b border-white/5 bg-[#0c0a08]/85 backdrop-blur-xl",
         className
       )}
       style={{ paddingTop: "env(safe-area-inset-top)" }}

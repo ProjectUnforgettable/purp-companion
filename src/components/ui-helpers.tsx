@@ -24,7 +24,7 @@ export function StatusDot({
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mb-2 px-1 text-xs font-semibold tracking-[0.14em] text-violet-300/80 uppercase">
+    <h2 className="mb-2 px-1 text-xs font-semibold tracking-[0.14em] text-orange-300/80 uppercase">
       {children}
     </h2>
   );

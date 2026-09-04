@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <rect width="512" height="512" rx="112" fill="#0b0614"/>
+  <rect width="512" height="512" rx="112" fill="#0c0a08"/>
   <rect x="24" y="24" width="464" height="464" rx="96" fill="url(#g)" opacity="0.95"/>
-  <text x="256" y="310" text-anchor="middle" font-family="Arial Black, Helvetica, sans-serif" font-size="240" font-weight="700" fill="#f5f0ff">P</text>
+  <text x="256" y="310" text-anchor="middle" font-family="Arial Black, Helvetica, sans-serif" font-size="220" font-weight="700" fill="#f7f1ea">PURP</text>
   <defs>
     <linearGradient id="g" x1="80" y1="40" x2="440" y2="480" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7c3aed"/>
-      <stop offset="1" stop-color="#4c1d95"/>
+      <stop stop-color="#e07840"/>
+      <stop offset="1" stop-color="#8a3a14"/>
     </linearGradient>
   </defs>
 </svg>

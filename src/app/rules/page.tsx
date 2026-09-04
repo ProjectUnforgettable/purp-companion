@@ -66,7 +66,7 @@ export default function RulesPage() {
                         key={rule}
                         className="flex gap-2 text-sm leading-relaxed text-zinc-300"
                       >
-                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-violet-400/80" />
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-orange-400/80" />
                         <span>{rule}</span>
                       </li>
                     ))}

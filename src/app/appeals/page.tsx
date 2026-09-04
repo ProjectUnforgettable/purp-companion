@@ -115,7 +115,7 @@ export default function AppealsPage() {
             </div>
             <Button
               type="submit"
-              className="h-11 w-full rounded-xl bg-violet-600 text-white hover:bg-violet-500"
+              className="h-11 w-full rounded-xl bg-orange-600 text-white hover:bg-orange-500"
             >
               Submit appeal
             </Button>

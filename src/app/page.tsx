@@ -5,6 +5,7 @@ import {
   Building2,
   Clock3,
   ExternalLink,
+  Flame,
   Gavel,
   MessageCircle,
   Radio,
@@ -19,6 +20,14 @@ import {
   formatRelativeDate,
   formatUptime,
 } from "@/components/ui-helpers";
+
+const heatStyles = {
+  low: "bg-emerald-500/15 text-emerald-300 border-emerald-500/25",
+  moderate: "bg-amber-500/15 text-amber-300 border-amber-500/25",
+  high: "bg-orange-500/20 text-orange-200 border-orange-500/30",
+  critical: "bg-red-500/20 text-red-300 border-red-500/30",
+} as const;
+
 const jobRows = [
   {
     key: "police",
@@ -46,13 +55,23 @@ const jobRows = [
     label: "Civilians",
     count: serverStatus.jobs.civilians,
     icon: Users,
-    tint: "text-violet-300 bg-violet-500/10",
+    tint: "text-orange-200/90 bg-orange-500/10",
   },
 ] as const;
 
 export default function HomePage() {
-  const { online, playersOnline, maxPlayers, queue, uptimeHours, lastRestart } =
-    serverStatus;
+  const {
+    online,
+    playersOnline,
+    maxPlayers,
+    queue,
+    uptimeHours,
+    lastRestart,
+    heat,
+    heatLabel,
+    staffingNote,
+    statusFeed,
+  } = serverStatus;
 
   return (
     <div className="px-4 pt-4 pb-6">
@@ -60,7 +79,7 @@ export default function HomePage() {
         <p className="font-heading text-5xl font-bold tracking-tight text-white">
           PURP
         </p>
-        <p className="mt-1 text-sm text-violet-300/90">{SERVER.fullName}</p>
+        <p className="mt-1 text-sm text-orange-300/90">{SERVER.fullName}</p>
         <p className="mt-2 text-xs text-zinc-500">{SERVER.tagline}</p>
       </section>
 
@@ -79,19 +98,31 @@ export default function HomePage() {
             </p>
             <p className="mt-0.5 text-sm text-zinc-400">Players online</p>
           </div>
-          <div className="rounded-xl bg-violet-500/10 px-3 py-2 text-right">
-            <p className="text-[11px] tracking-wide text-violet-300/80 uppercase">
-              Queue
-            </p>
-            <p className="font-heading text-xl font-semibold text-violet-200">
-              {queue > 0 ? queue : "—"}
-            </p>
+          <div className="space-y-2 text-right">
+            <div className="rounded-xl bg-orange-500/10 px-3 py-2">
+              <p className="text-[11px] tracking-wide text-orange-300/80 uppercase">
+                Queue
+              </p>
+              <p className="font-heading text-xl font-semibold text-orange-200">
+                {queue > 0 ? queue : "—"}
+              </p>
+            </div>
+            <div
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${heatStyles[heat]}`}
+            >
+              <Flame className="size-3" />
+              {heatLabel}
+            </div>
           </div>
         </div>
 
+        <p className="mt-3 rounded-xl border border-white/5 bg-black/20 px-3 py-2 text-xs text-zinc-400">
+          {staffingNote}
+        </p>
+
         <div className="mt-4 grid grid-cols-2 gap-2 border-t border-white/5 pt-4 text-sm">
           <div className="flex items-center gap-2 text-zinc-300">
-            <Clock3 className="size-4 text-violet-300" />
+            <Clock3 className="size-4 text-orange-300" />
             <div>
               <p className="text-[11px] text-zinc-500">Uptime</p>
               <p className="font-medium">{formatUptime(uptimeHours)}</p>
@@ -107,7 +138,23 @@ export default function HomePage() {
       </section>
 
       <section className="animate-fade-up-delay-2 mb-5">
-        <SectionLabel>On duty</SectionLabel>
+        <SectionLabel>#server-status feed</SectionLabel>
+        <div className="purp-card divide-y divide-white/5 overflow-hidden">
+          {statusFeed.map((line) => (
+            <div key={line.id} className="px-4 py-3">
+              <p className="font-mono text-xs leading-relaxed text-zinc-300">
+                {line.text}
+              </p>
+              <p className="mt-1 text-[10px] text-zinc-600">
+                {formatRelativeDate(line.at)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-5">
+        <SectionLabel>On shift</SectionLabel>
         <div className="grid grid-cols-2 gap-2">
           {jobRows.map(({ key, label, count, icon: Icon, tint }) => (
             <div key={key} className="purp-card flex items-center gap-3 p-3">
@@ -132,7 +179,7 @@ export default function HomePage() {
         <div className="grid grid-cols-3 gap-2">
           <Link
             href="/join"
-            className="purp-press flex flex-col items-center gap-1.5 rounded-2xl border border-violet-400/30 bg-violet-600/90 py-3 text-white hover:bg-violet-500"
+            className="purp-press flex flex-col items-center gap-1.5 rounded-2xl border border-orange-400/30 bg-orange-600/90 py-3 text-white hover:bg-orange-500"
           >
             <Radio className="size-5" />
             <span className="text-xs font-medium">Connect</span>
@@ -166,7 +213,7 @@ export default function HomePage() {
             <div>
               <p className="font-medium text-white">Departments</p>
               <p className="text-xs text-zinc-500">
-                Police · EMS · Fire applications
+                Police · EMS · Fire — 10h in-game unlock
               </p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />

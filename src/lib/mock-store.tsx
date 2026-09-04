@@ -21,6 +21,8 @@ export type DepartmentApplication = {
   discord: string;
   whyJoin: string;
   experience: string;
+  /** pending → staff review; never auto-grants a job */
+  status: "pending" | "under_review" | "accepted" | "denied";
   submittedAt: string;
 };
 
@@ -40,12 +42,13 @@ type MockStoreValue = {
   applications: DepartmentApplication[];
   appeals: BanAppeal[];
   submitApplication: (
-    app: Omit<DepartmentApplication, "id" | "submittedAt">
+    app: Omit<DepartmentApplication, "id" | "submittedAt" | "status">
   ) => DepartmentApplication;
   submitAppeal: (
     appeal: Omit<BanAppeal, "id" | "submittedAt">
   ) => BanAppeal;
   hasApplied: (departmentId: string) => boolean;
+  getApplication: (departmentId: string) => DepartmentApplication | undefined;
 };
 
 const MockStoreContext = createContext<MockStoreValue | null>(null);
@@ -64,10 +67,11 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
   const profile = unlockedDemo ? unlockedProfile : defaultProfile;
 
   const submitApplication = useCallback(
-    (app: Omit<DepartmentApplication, "id" | "submittedAt">) => {
+    (app: Omit<DepartmentApplication, "id" | "submittedAt" | "status">) => {
       const entry: DepartmentApplication = {
         ...app,
         id: uid("app"),
+        status: "pending",
         submittedAt: new Date().toISOString(),
       };
       setApplications((prev) => [entry, ...prev]);
@@ -95,6 +99,12 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
     [applications]
   );
 
+  const getApplication = useCallback(
+    (departmentId: string) =>
+      applications.find((a) => a.departmentId === departmentId),
+    [applications]
+  );
+
   const value = useMemo(
     () => ({
       unlockedDemo,
@@ -105,6 +115,7 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
       submitApplication,
       submitAppeal,
       hasApplied,
+      getApplication,
     }),
     [
       unlockedDemo,
@@ -114,6 +125,7 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
       submitApplication,
       submitAppeal,
       hasApplied,
+      getApplication,
     ]
   );
 

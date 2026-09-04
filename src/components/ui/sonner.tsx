@@ -25,7 +25,7 @@ export function Toaster(props: ToasterProps) {
       toastOptions={{
         classNames: {
           toast:
-            "border border-violet-500/30 bg-[#161022] text-zinc-100 shadow-lg",
+            "border border-orange-500/30 bg-[#16120e] text-zinc-100 shadow-lg",
         },
       }}
       {...props}

@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { announcements } from "@/lib/mock-data";
 
 const typeStyles = {
-  announcement: "bg-violet-500/15 text-violet-200",
+  announcement: "bg-orange-500/15 text-orange-200",
   changelog: "bg-sky-500/15 text-sky-200",
-  event: "bg-fuchsia-500/15 text-fuchsia-200",
+  event: "bg-amber-500/15 text-amber-200",
 } as const;
 
 const typeLabels = {

@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import {
+  CheckCircle2,
   Flame,
   Heart,
   Lock,
   Shield,
   Unlock,
-  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/page-header";
@@ -33,6 +33,13 @@ const tintMap = {
   fire: "from-orange-600/30 to-orange-950/40 text-orange-300",
 } as const;
 
+const statusLabel = {
+  pending: "Pending staff review",
+  under_review: "Under review",
+  accepted: "Accepted (staff assigned)",
+  denied: "Denied",
+} as const;
+
 function ApplicationForm({
   department,
   onClose,
@@ -51,7 +58,7 @@ function ApplicationForm({
     e.preventDefault();
     if (already) {
       toast.message("Already submitted", {
-        description: `You already applied to ${department.shortName} in this demo session.`,
+        description: `You already applied to ${department.shortName} this session.`,
       });
       return;
     }
@@ -70,7 +77,7 @@ function ApplicationForm({
     });
     toast.success("Application submitted", {
       description:
-        "Saved locally for this demo. Emergency roles are staff-assigned after review — not self-serve.",
+        "Queued for staff review. Emergency roles are staff-assigned — never self-serve.",
     });
     onClose();
   };
@@ -82,7 +89,7 @@ function ApplicationForm({
           Apply — {department.shortName}
         </p>
         <p className="text-xs text-zinc-500">
-          Mock form only. Does not post to Discord.
+          Mock form only. Submitting does not grant a job.
         </p>
       </div>
       <div className="space-y-1.5">
@@ -136,7 +143,7 @@ function ApplicationForm({
         </Button>
         <Button
           type="submit"
-          className="h-11 flex-1 rounded-xl bg-violet-600 text-white hover:bg-violet-500"
+          className="h-11 flex-1 rounded-xl bg-orange-600 text-white hover:bg-orange-500"
         >
           Submit
         </Button>
@@ -146,8 +153,14 @@ function ApplicationForm({
 }
 
 export default function DepartmentsPage() {
-  const { profile, unlockedDemo, setUnlockedDemo, hasApplied, applications } =
-    useMockStore();
+  const {
+    profile,
+    unlockedDemo,
+    setUnlockedDemo,
+    hasApplied,
+    getApplication,
+    applications,
+  } = useMockStore();
   const [activeId, setActiveId] = useState<string | null>(null);
   const unlocked = profile.playtimeHours >= profile.departmentHoursRequired;
 
@@ -155,7 +168,7 @@ export default function DepartmentsPage() {
     <div>
       <PageHeader
         title="Departments"
-        subtitle="Applications unlock at 10 hours"
+        subtitle="Apply after 10 in-game hours"
         backHref="/more"
       />
       <div className="space-y-4 px-4 py-4">
@@ -165,7 +178,7 @@ export default function DepartmentsPage() {
               Demo unlock toggle
             </Label>
             <p className="text-xs text-zinc-500">
-              Current mock playtime: {profile.playtimeHours.toFixed(1)}h
+              Mock in-game playtime: {profile.playtimeHours.toFixed(1)}h
             </p>
           </div>
           <Switch
@@ -178,8 +191,8 @@ export default function DepartmentsPage() {
         <p className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs leading-relaxed text-amber-100/90">
           Emergency roles (Police, EMS, Fire) are{" "}
           <strong className="font-semibold">staff-assigned after review</strong>
-          — not self-serve. Applications are reviewed by staff before any job
-          grant.
+          — never self-serve. Applications only open after{" "}
+          <strong className="font-semibold">10 hours in-game</strong> playtime.
         </p>
 
         <SectionLabel>Departments</SectionLabel>
@@ -187,6 +200,7 @@ export default function DepartmentsPage() {
           {departments.map((dept) => {
             const Icon = iconMap[dept.icon];
             const applied = hasApplied(dept.id);
+            const app = getApplication(dept.id);
             const showForm = activeId === dept.id;
 
             return (
@@ -214,10 +228,10 @@ export default function DepartmentsPage() {
                             Locked
                           </Badge>
                         )}
-                        {applied ? (
-                          <Badge className="gap-1 rounded-full bg-violet-500/15 text-violet-200">
+                        {app ? (
+                          <Badge className="gap-1 rounded-full bg-orange-500/15 text-orange-200">
                             <CheckCircle2 className="size-3" />
-                            Applied
+                            {statusLabel[app.status]}
                           </Badge>
                         ) : null}
                       </div>
@@ -233,7 +247,7 @@ export default function DepartmentsPage() {
                         key={req}
                         className="flex gap-2 text-xs text-zinc-400"
                       >
-                        <span className="mt-1.5 size-1 shrink-0 rounded-full bg-violet-400" />
+                        <span className="mt-1.5 size-1 shrink-0 rounded-full bg-orange-400" />
                         {req}
                       </li>
                     ))}
@@ -242,10 +256,8 @@ export default function DepartmentsPage() {
                   <Button
                     type="button"
                     disabled={!unlocked}
-                    onClick={() =>
-                      setActiveId(showForm ? null : dept.id)
-                    }
-                    className="mt-3 h-11 w-full rounded-xl bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-40"
+                    onClick={() => setActiveId(showForm ? null : dept.id)}
+                    className="mt-3 h-11 w-full rounded-xl bg-orange-600 text-white hover:bg-orange-500 disabled:opacity-40"
                   >
                     {unlocked
                       ? showForm
@@ -253,7 +265,7 @@ export default function DepartmentsPage() {
                         : applied
                           ? "View / re-open form"
                           : "Apply"
-                      : `Need ${profile.departmentHoursRequired}h playtime`}
+                      : `Need ${profile.departmentHoursRequired}h in-game`}
                   </Button>
                 </div>
                 {showForm && unlocked ? (
@@ -279,7 +291,7 @@ export default function DepartmentsPage() {
                     {app.departmentId.toUpperCase()} — {app.name}
                   </p>
                   <p className="text-xs text-zinc-500">
-                    @{app.discord} ·{" "}
+                    @{app.discord} · {statusLabel[app.status]} ·{" "}
                     {new Date(app.submittedAt).toLocaleString()}
                   </p>
                 </li>

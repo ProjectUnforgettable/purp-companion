@@ -1,30 +1,54 @@
 "use client";
 
-import { BadgeCheck, Briefcase, Clock3, Wallet } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
 import {
-  SectionLabel,
-  formatCurrency,
-} from "@/components/ui-helpers";
+  BadgeCheck,
+  Briefcase,
+  Clock3,
+  Landmark,
+  Link2,
+  Lock,
+  Package,
+  Phone,
+  ShieldCheck,
+  Wallet,
+} from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { SectionLabel, formatCurrency } from "@/components/ui-helpers";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { apiPlaceholders } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
+
+const snapshotIcons = {
+  phone: Phone,
+  bank: Landmark,
+  inventory: Package,
+} as const;
 
 export default function ProfilePage() {
   const { profile, unlockedDemo, setUnlockedDemo } = useMockStore();
   const required = profile.departmentHoursRequired;
   const progress = Math.min(100, (profile.playtimeHours / required) * 100);
   const unlocked = profile.playtimeHours >= required;
+  const { shift, characterSheet } = profile;
 
   return (
     <div>
-      <PageHeader title="Profile" subtitle="Mock player card" />
+      <PageHeader
+        title="Profile"
+        subtitle="Read-only character sheet (from game)"
+      />
       <div className="space-y-5 px-4 py-4">
+        <p className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs leading-relaxed text-orange-100/90">
+          Character data is synced from the game — there is no Discord character
+          creation form here. Fields below are mock snapshots.
+        </p>
+
         <section className="animate-fade-up purp-card p-4">
           <div className="flex items-start gap-3">
-            <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-700 font-heading text-xl font-bold text-white shadow-lg shadow-violet-900/40">
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-800 font-heading text-xl font-bold text-white shadow-lg shadow-orange-950/50">
               {profile.characterName
                 .split(" ")
                 .map((n) => n[0])
@@ -39,16 +63,24 @@ export default function ProfilePage() {
                 @{profile.discordHandle}
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                {profile.badges.map((badge) => (
-                  <Badge
-                    key={badge}
-                    variant="secondary"
-                    className="gap-1 rounded-full border border-violet-400/20 bg-violet-500/15 text-violet-200"
-                  >
-                    <BadgeCheck className="size-3" />
-                    {badge}
+                {profile.discordLinked ? (
+                  <Badge className="gap-1 rounded-full border border-indigo-400/20 bg-indigo-500/15 text-indigo-200">
+                    <Link2 className="size-3" />
+                    Discord linked
                   </Badge>
-                ))}
+                ) : null}
+                {profile.whitelisted ? (
+                  <Badge className="gap-1 rounded-full border border-emerald-400/20 bg-emerald-500/15 text-emerald-200">
+                    <ShieldCheck className="size-3" />
+                    Whitelisted
+                  </Badge>
+                ) : null}
+                {profile.verified ? (
+                  <Badge className="gap-1 rounded-full border border-orange-400/20 bg-orange-500/15 text-orange-200">
+                    <BadgeCheck className="size-3" />
+                    Verified
+                  </Badge>
+                ) : null}
               </div>
             </div>
           </div>
@@ -56,7 +88,7 @@ export default function ProfilePage() {
 
         <section className="animate-fade-up-delay-1 grid grid-cols-2 gap-2">
           <div className="purp-card p-3">
-            <div className="mb-2 inline-flex size-8 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
+            <div className="mb-2 inline-flex size-8 items-center justify-center rounded-lg bg-orange-500/15 text-orange-300">
               <Briefcase className="size-4" />
             </div>
             <p className="text-xs text-zinc-500">Job</p>
@@ -67,11 +99,11 @@ export default function ProfilePage() {
             <div className="mb-2 inline-flex size-8 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-300">
               <Clock3 className="size-4" />
             </div>
-            <p className="text-xs text-zinc-500">Playtime</p>
+            <p className="text-xs text-zinc-500">In-game playtime</p>
             <p className="font-heading text-xl font-semibold text-white">
               {profile.playtimeHours.toFixed(1)}h
             </p>
-            <p className="text-xs text-zinc-400">In-game</p>
+            <p className="text-xs text-zinc-400">Not wall-clock</p>
           </div>
           <div className="purp-card p-3">
             <div className="mb-2 inline-flex size-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-300">
@@ -93,11 +125,65 @@ export default function ProfilePage() {
           </div>
         </section>
 
+        <section className="purp-card p-4">
+          <SectionLabel>Character sheet</SectionLabel>
+          <dl className="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <dt className="text-xs text-zinc-500">DOB</dt>
+              <dd className="text-zinc-200">{characterSheet.dob}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-zinc-500">Nationality</dt>
+              <dd className="text-zinc-200">{characterSheet.nationality}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-zinc-500">Phone</dt>
+              <dd className="font-mono text-zinc-200">{characterSheet.phone}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-zinc-500">Licenses</dt>
+              <dd className="text-zinc-200">
+                {characterSheet.licenses.join(", ")}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="purp-card p-4">
+          <SectionLabel>Job / shift board</SectionLabel>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge
+              className={
+                shift.onDuty
+                  ? "rounded-full bg-emerald-500/15 text-emerald-300"
+                  : "rounded-full bg-zinc-500/20 text-zinc-300"
+              }
+            >
+              {shift.onDuty ? "On duty" : "Off duty"}
+            </Badge>
+            <span className="text-xs text-zinc-500">{shift.payGrade}</span>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p className="text-xs text-zinc-500">Desk / post</p>
+              <p className="text-zinc-200">{shift.desk}</p>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500">Pay</p>
+              <p className="text-zinc-200">
+                {shift.hourlyPay > 0
+                  ? `${formatCurrency(shift.hourlyPay)}/hr`
+                  : "—"}
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section className="animate-fade-up-delay-2 purp-card p-4">
           <SectionLabel>Department unlock</SectionLabel>
           <div className="mb-2 flex items-end justify-between gap-2">
             <p className="text-sm text-zinc-300">
-              {profile.playtimeHours.toFixed(1)} / {required} hours
+              {profile.playtimeHours.toFixed(1)} / {required} in-game hours
             </p>
             <p
               className={`text-xs font-semibold ${
@@ -109,9 +195,36 @@ export default function ProfilePage() {
           </div>
           <Progress value={progress} className="h-2.5" />
           <p className="mt-2 text-xs text-zinc-500">
-            Emergency department applications unlock after {required} hours
-            in-game. Roles are staff-assigned after review.
+            Police / EMS / Fire apps unlock after {required} hours{" "}
+            <strong className="font-medium text-zinc-400">in-game</strong>. Roles
+            are staff-assigned after review — never self-serve.
           </p>
+        </section>
+
+        <section>
+          <SectionLabel>Snapshots</SectionLabel>
+          <div className="space-y-2">
+            {apiPlaceholders.map((item) => {
+              const Icon = snapshotIcons[item.id];
+              return (
+                <div
+                  key={item.id}
+                  className="purp-card flex items-start gap-3 p-4 opacity-90"
+                >
+                  <span className="inline-flex size-10 items-center justify-center rounded-xl bg-white/5 text-zinc-400">
+                    <Icon className="size-5" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-white">{item.title}</p>
+                      <Lock className="size-3.5 text-zinc-600" />
+                    </div>
+                    <p className="mt-0.5 text-xs text-zinc-500">{item.blurb}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         <section className="purp-card flex items-center justify-between gap-3 p-4">
@@ -120,8 +233,9 @@ export default function ProfilePage() {
               Demo: unlock applications
             </Label>
             <p className="mt-0.5 text-xs text-zinc-500">
-              Toggle mock playtime to {unlockedDemo ? "7.5h" : "14.2h"} so you
-              can preview locked and unlocked states.
+              Toggle mock in-game playtime to{" "}
+              {unlockedDemo ? "7.5h" : "14.2h"} to preview locked and unlocked
+              states.
             </p>
           </div>
           <Switch

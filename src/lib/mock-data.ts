@@ -2,13 +2,20 @@ export const SERVER = {
   name: "PURP",
   fullName: "Project Unforgettable",
   tagline: "Premium roleplay. Unforgettable stories.",
-  connectCode: "cfx.re/join/purp",
-  connectNote: "Example connect string — replace with your live cfx.re code.",
-  discordUrl: "https://discord.gg/purp-example",
-  discordNote: "Placeholder Discord invite — wire to your real server invite later.",
+  /** Shown until the live cfx.re / IP is published */
+  connectLabel: "Server IP / cfx link TBD",
+  connectNote:
+    "Join via cfx.re once hosted. Until then, check Discord #announcements for the live connect string.",
+  discordGuildId: "1373397457177935893",
+  discordUrl: "https://discord.com/channels/1373397457177935893",
+  discordNote: "Opens the PURP Discord guild (deep link). Invite TBD.",
   website: "https://purp.example",
   maxPlayers: 128,
+  controllerTip:
+    "Xbox and PlayStation controllers are supported in-game via purp-input.",
 } as const;
+
+export type HeatLevel = "low" | "moderate" | "high" | "critical";
 
 export type ServerStatus = {
   online: boolean;
@@ -17,12 +24,18 @@ export type ServerStatus = {
   queue: number;
   uptimeHours: number;
   lastRestart: string;
+  /** City heat / priority call load — mirrors Discord #server-status */
+  heat: HeatLevel;
+  heatLabel: string;
+  staffingNote: string;
   jobs: {
     police: number;
     ems: number;
     fire: number;
     civilians: number;
   };
+  /** Short feed lines like a #server-status channel */
+  statusFeed: { id: string; text: string; at: string }[];
 };
 
 export const serverStatus: ServerStatus = {
@@ -32,18 +45,61 @@ export const serverStatus: ServerStatus = {
   queue: 3,
   uptimeHours: 18.4,
   lastRestart: "2026-09-04T06:00:00Z",
+  heat: "moderate",
+  heatLabel: "Moderate city heat",
+  staffingNote: "LEO staffing OK · EMS thin · Fire covered",
   jobs: {
     police: 8,
     ems: 5,
     fire: 3,
     civilians: 26,
   },
+  statusFeed: [
+    {
+      id: "f1",
+      text: "42/128 online · queue 3 · heat MODERATE",
+      at: "2026-09-04T22:55:00Z",
+    },
+    {
+      id: "f2",
+      text: "On shift — Police 8 · EMS 5 · Fire 3 · Civ 26",
+      at: "2026-09-04T22:55:00Z",
+    },
+    {
+      id: "f3",
+      text: "Staffing: LEO OK · EMS thin · Fire covered",
+      at: "2026-09-04T22:40:00Z",
+    },
+    {
+      id: "f4",
+      text: "Last restart ~18h ago · economy tick healthy",
+      at: "2026-09-04T22:10:00Z",
+    },
+  ],
+};
+
+export type ShiftBoard = {
+  onDuty: boolean;
+  desk: string;
+  payGrade: string;
+  hourlyPay: number;
+  clockedInAt: string | null;
+};
+
+export type ApiSnapshotPlaceholder = {
+  id: "phone" | "bank" | "inventory";
+  title: string;
+  blurb: string;
 };
 
 export type MockProfile = {
   characterName: string;
   discordHandle: string;
   discordId: string;
+  discordLinked: boolean;
+  whitelisted: boolean;
+  verified: boolean;
+  /** In-game hours only — not wall-clock */
   playtimeHours: number;
   job: string;
   rank: string;
@@ -51,27 +107,82 @@ export type MockProfile = {
   bank: number;
   badges: string[];
   departmentHoursRequired: number;
+  shift: ShiftBoard;
+  /** Read-only character sheet sourced from game (mock) */
+  characterSheet: {
+    dob: string;
+    nationality: string;
+    phone: string;
+    licenses: string[];
+  };
 };
 
 export const defaultProfile: MockProfile = {
   characterName: "Maya Reyes",
   discordHandle: "maya.reyes",
   discordId: "123456789012345678",
+  discordLinked: true,
+  whitelisted: true,
+  verified: true,
   playtimeHours: 7.5,
   job: "Unemployed",
   rank: "Civilian",
   cash: 2450,
   bank: 18750,
-  badges: ["Verified", "Civilian"],
+  badges: ["Discord linked", "Whitelisted", "Verified", "Civilian"],
   departmentHoursRequired: 10,
+  shift: {
+    onDuty: false,
+    desk: "—",
+    payGrade: "Civilian",
+    hourlyPay: 0,
+    clockedInAt: null,
+  },
+  characterSheet: {
+    dob: "1998-04-12",
+    nationality: "American",
+    phone: "(555) 014-2291",
+    licenses: ["Driver", "Firearm"],
+  },
 };
 
-/** Alternate profile used when demo unlock toggle is on */
+/** Alternate profile when demo unlock toggle is on (≥10h in-game) */
 export const unlockedProfile: MockProfile = {
   ...defaultProfile,
   playtimeHours: 14.2,
-  badges: ["Verified", "Civilian", "Eligible"],
+  badges: [
+    "Discord linked",
+    "Whitelisted",
+    "Verified",
+    "Civilian",
+    "Dept eligible",
+  ],
+  shift: {
+    onDuty: true,
+    desk: "Legion Square — taxi stand (temp)",
+    payGrade: "Civilian · Contract",
+    hourlyPay: 85,
+    clockedInAt: "2026-09-04T20:15:00Z",
+  },
 };
+
+export const apiPlaceholders: ApiSnapshotPlaceholder[] = [
+  {
+    id: "phone",
+    title: "Phone",
+    blurb: "Recent calls & messages — coming when phone APIs exist.",
+  },
+  {
+    id: "bank",
+    title: "Bank ledger",
+    blurb: "Transfers & invoices — coming when economy APIs exist.",
+  },
+  {
+    id: "inventory",
+    title: "Inventory",
+    blurb: "Hotbar & stash snapshot — coming when inventory APIs exist.",
+  },
+];
 
 export type Department = {
   id: "police" | "ems" | "fire";
@@ -91,10 +202,10 @@ export const departments: Department[] = [
     description:
       "Protect and serve with professional LEO roleplay. Patrol, investigations, and coordinated responses.",
     requirements: [
-      "10 hours in-game playtime",
-      "Discord verified + whitelist approved",
+      "10 hours in-game playtime (not wall-clock)",
+      "Discord linked + whitelist approved",
       "Clean ban history (or resolved appeals)",
-      "Pass scenario interview with staff",
+      "Staff interview — roles are staff-assigned, never self-serve",
     ],
     color: "blue",
     icon: "shield",
@@ -106,10 +217,10 @@ export const departments: Department[] = [
     description:
       "Stabilize scenes, transport patients, and keep the city alive with medical RP.",
     requirements: [
-      "10 hours in-game playtime",
-      "Discord verified + whitelist approved",
+      "10 hours in-game playtime (not wall-clock)",
+      "Discord linked + whitelist approved",
       "Willingness to learn medical SOPs",
-      "Staff review after application",
+      "Staff review — assignment only after approval",
     ],
     color: "rose",
     icon: "heart",
@@ -121,10 +232,10 @@ export const departments: Department[] = [
     description:
       "Structure fires, vehicle extrication, and hazmat response with coordinated crew RP.",
     requirements: [
-      "10 hours in-game playtime",
-      "Discord verified + whitelist approved",
+      "10 hours in-game playtime (not wall-clock)",
+      "Discord linked + whitelist approved",
       "Team-first attitude on scenes",
-      "Staff assignment after review",
+      "Staff assignment after review — not self-serve",
     ],
     color: "orange",
     icon: "flame",
@@ -300,7 +411,7 @@ export const announcements: Announcement[] = [
     id: "a1",
     type: "announcement",
     title: "Whitelist applications reopening",
-    body: "Civilian whitelist reviews resume this weekend. Make sure Discord is verified and your rules quiz is complete before applying.",
+    body: "Civilian whitelist reviews resume this weekend. Link Discord, verify, and finish the rules quiz before applying.",
     date: "2026-09-04T15:00:00Z",
   },
   {
@@ -314,7 +425,7 @@ export const announcements: Announcement[] = [
     id: "a3",
     type: "event",
     title: "Friday night car meet",
-    body: "Legion Square from 8–10 PM server time. No weapons, pure car culture RP. Prizes for best build voted by staff.",
+    body: "Legion Square from 8–10 PM server time. No weapons, pure car culture RP. Controllers welcome via purp-input.",
     date: "2026-09-02T18:00:00Z",
   },
   {
@@ -327,8 +438,8 @@ export const announcements: Announcement[] = [
   {
     id: "a5",
     type: "announcement",
-    title: "Department apps require 10 hours",
-    body: "Police, EMS, and Fire applications unlock after 10 hours of in-game playtime. Emergency roles are staff-assigned after review.",
+    title: "Department apps require 10 in-game hours",
+    body: "Police, EMS, and Fire applications unlock after 10 hours of in-game playtime. Emergency roles are staff-assigned after review — never self-serve.",
     date: "2026-08-28T12:00:00Z",
   },
 ];
@@ -337,29 +448,34 @@ export const joinSteps = [
   {
     step: 1,
     title: "Install FiveM",
-    detail: "Download the FiveM client from the official FiveM website and install it on Windows.",
+    detail:
+      "Download the FiveM client from the official FiveM website and install it on Windows.",
   },
   {
     step: 2,
     title: "Join our Discord",
-    detail: "Verify, read #rules, and complete whitelist onboarding so staff can approve your character.",
+    detail:
+      "Open the PURP guild, verify, read #rules, and complete whitelist onboarding so staff can approve you.",
   },
   {
     step: 3,
     title: "Connect to PURP",
-    detail: `In FiveM, use the connect link (example: ${SERVER.connectCode}) or paste the server IP provided in Discord.`,
+    detail:
+      "Once hosted, join via cfx.re. Until then the connect string is TBD — watch Discord for the live IP / cfx link.",
   },
   {
     step: 4,
-    title: "Create your character",
-    detail: "Pick a realistic name, backstory, and start as a civilian. Department apps unlock at 10 hours.",
+    title: "Play your character in-game",
+    detail:
+      "Characters are created and managed in-game (read-only in this app). Department apps unlock at 10 in-game hours.",
   },
 ];
 
 export const joinRequirements = [
   "18+ (or server-stated minimum age)",
   "Working microphone for voice RP",
-  "Discord account verified in the PURP server",
+  "Discord linked + verified in the PURP guild",
+  "Whitelist approved before connecting",
   "Willingness to follow NL/WL rules and staff direction",
   "No active bans on linked accounts without a resolved appeal",
 ];

@@ -5,6 +5,7 @@ import {
   ChevronRight,
   ExternalLink,
   FileWarning,
+  Gamepad2,
   Info,
   MessageCircle,
   Newspaper,
@@ -19,7 +20,7 @@ const links = [
   {
     href: "/departments",
     label: "Departments & applications",
-    description: "Police, EMS, Fire — 10h unlock",
+    description: "Police, EMS, Fire — 10h in-game unlock",
     icon: Shield,
   },
   {
@@ -50,7 +51,7 @@ export default function MorePage() {
                 href={href}
                 className="purp-press flex items-center gap-3 px-4 py-3.5"
               >
-                <span className="inline-flex size-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300">
+                <span className="inline-flex size-10 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300">
                   <Icon className="size-5" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -77,11 +78,9 @@ export default function MorePage() {
               <MessageCircle className="size-5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-medium text-white">
-                Open Discord
-              </span>
+              <span className="block font-medium text-white">Open Discord</span>
               <span className="block text-xs text-zinc-500">
-                Placeholder invite — {SERVER.discordNote}
+                Guild {SERVER.discordGuildId} — {SERVER.discordNote}
               </span>
             </span>
             <ExternalLink className="size-4 text-zinc-600" />
@@ -89,17 +88,32 @@ export default function MorePage() {
         </section>
 
         <section>
+          <SectionLabel>Controllers</SectionLabel>
+          <div className="purp-card flex items-start gap-3 p-4">
+            <span className="inline-flex size-10 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300">
+              <Gamepad2 className="size-5" />
+            </span>
+            <div>
+              <p className="font-medium text-white">Xbox + PlayStation</p>
+              <p className="mt-0.5 text-sm text-zinc-400">
+                {SERVER.controllerTip}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
           <SectionLabel>Appearance</SectionLabel>
           <div className="purp-card flex items-start gap-3 p-4">
-            <span className="inline-flex size-10 items-center justify-center rounded-xl bg-fuchsia-500/15 text-fuchsia-300">
+            <span className="inline-flex size-10 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300">
               <Palette className="size-5" />
             </span>
             <div>
-              <p className="font-medium text-white">Dark premium theme</p>
+              <p className="font-medium text-white">Dark + burnt orange</p>
               <p className="mt-0.5 text-sm text-zinc-400">
-                PURP ships dark-only for this prototype — deep purple / black
-                accents matched to the Project Unforgettable brand. Light mode
-                can be added later if needed.
+                PURP ships dark-only with burnt-orange accents to match framework
+                markers. Wordmark logo for now; shield/flame assets may come
+                later.
               </p>
             </div>
           </div>
@@ -109,28 +123,25 @@ export default function MorePage() {
           <SectionLabel>About</SectionLabel>
           <div className="purp-card space-y-3 p-4">
             <div className="flex items-start gap-3">
-              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300">
                 <Info className="size-5" />
               </span>
               <div>
                 <p className="font-heading text-lg font-semibold text-white">
                   PURP
                 </p>
-                <p className="text-sm text-violet-300/90">
-                  {SERVER.fullName}
-                </p>
+                <p className="text-sm text-orange-300/90">{SERVER.fullName}</p>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                  A mobile-first companion for players — status, rules, join
-                  guide, profile, department apps, and appeals. Built as a web
-                  prototype intended for a future Capacitor wrap on iOS and
-                  Android.
+                  Mobile companion for status, rules, join guide, read-only
+                  character sheet, department apps, and appeals. Built for a
+                  future Capacitor wrap on iOS and Android.
                 </p>
               </div>
             </div>
-            <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 px-3 py-2.5 text-xs leading-relaxed text-violet-100/90">
-              <strong className="font-semibold">Demo mode:</strong> all player,
-              economy, and status data is mocked until this app is wired to
-              FXServer status APIs and Discord bots.
+            <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs leading-relaxed text-orange-100/90">
+              <strong className="font-semibold">Demo mode:</strong> player,
+              economy, and status data is mocked until wired to FXServer status
+              APIs, in-game playtime clocks, and Discord bots.
             </div>
             <p className="text-center text-[11px] text-zinc-600">
               Companion prototype · v0.1.0 · no secrets embedded
