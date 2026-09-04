@@ -1,0 +1,293 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Flame,
+  Heart,
+  Lock,
+  Shield,
+  Unlock,
+  CheckCircle2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/layout/page-header";
+import { SectionLabel } from "@/components/ui-helpers";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { departments, type Department } from "@/lib/mock-data";
+import { useMockStore } from "@/lib/mock-store";
+
+const iconMap = {
+  shield: Shield,
+  heart: Heart,
+  flame: Flame,
+} as const;
+
+const tintMap = {
+  police: "from-sky-600/30 to-sky-950/40 text-sky-300",
+  ems: "from-rose-600/30 to-rose-950/40 text-rose-300",
+  fire: "from-orange-600/30 to-orange-950/40 text-orange-300",
+} as const;
+
+function ApplicationForm({
+  department,
+  onClose,
+}: {
+  department: Department;
+  onClose: () => void;
+}) {
+  const { profile, submitApplication, hasApplied } = useMockStore();
+  const [name, setName] = useState(profile.characterName);
+  const [discord, setDiscord] = useState(profile.discordHandle);
+  const [whyJoin, setWhyJoin] = useState("");
+  const [experience, setExperience] = useState("");
+  const already = hasApplied(department.id);
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (already) {
+      toast.message("Already submitted", {
+        description: `You already applied to ${department.shortName} in this demo session.`,
+      });
+      return;
+    }
+    if (!name.trim() || !discord.trim() || whyJoin.trim().length < 12) {
+      toast.error("Complete the form", {
+        description: "Name, Discord, and a short “why join” are required.",
+      });
+      return;
+    }
+    submitApplication({
+      departmentId: department.id,
+      name: name.trim(),
+      discord: discord.trim(),
+      whyJoin: whyJoin.trim(),
+      experience: experience.trim(),
+    });
+    toast.success("Application submitted", {
+      description:
+        "Saved locally for this demo. Emergency roles are staff-assigned after review — not self-serve.",
+    });
+    onClose();
+  };
+
+  return (
+    <form onSubmit={onSubmit} className="purp-card mt-3 space-y-3 p-4">
+      <div>
+        <p className="font-heading font-semibold text-white">
+          Apply — {department.shortName}
+        </p>
+        <p className="text-xs text-zinc-500">
+          Mock form only. Does not post to Discord.
+        </p>
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="app-name">Character name</Label>
+        <Input
+          id="app-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="h-11 rounded-xl border-white/10 bg-white/5"
+          required
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="app-discord">Discord</Label>
+        <Input
+          id="app-discord"
+          value={discord}
+          onChange={(e) => setDiscord(e.target.value)}
+          className="h-11 rounded-xl border-white/10 bg-white/5"
+          required
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="app-why">Why do you want to join?</Label>
+        <Textarea
+          id="app-why"
+          value={whyJoin}
+          onChange={(e) => setWhyJoin(e.target.value)}
+          className="min-h-24 rounded-xl border-white/10 bg-white/5"
+          required
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="app-xp">Relevant experience</Label>
+        <Textarea
+          id="app-xp"
+          value={experience}
+          onChange={(e) => setExperience(e.target.value)}
+          className="min-h-20 rounded-xl border-white/10 bg-white/5"
+          placeholder="Prior LEO/EMS RP, certifications, etc."
+        />
+      </div>
+      <div className="flex gap-2 pt-1">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onClose}
+          className="h-11 flex-1 rounded-xl border-white/10 bg-white/5"
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          className="h-11 flex-1 rounded-xl bg-violet-600 text-white hover:bg-violet-500"
+        >
+          Submit
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export default function DepartmentsPage() {
+  const { profile, unlockedDemo, setUnlockedDemo, hasApplied, applications } =
+    useMockStore();
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const unlocked = profile.playtimeHours >= profile.departmentHoursRequired;
+
+  return (
+    <div>
+      <PageHeader
+        title="Departments"
+        subtitle="Applications unlock at 10 hours"
+        backHref="/more"
+      />
+      <div className="space-y-4 px-4 py-4">
+        <div className="purp-card flex items-center justify-between gap-3 p-4">
+          <div>
+            <Label htmlFor="dept-unlock" className="text-sm text-white">
+              Demo unlock toggle
+            </Label>
+            <p className="text-xs text-zinc-500">
+              Current mock playtime: {profile.playtimeHours.toFixed(1)}h
+            </p>
+          </div>
+          <Switch
+            id="dept-unlock"
+            checked={unlockedDemo}
+            onCheckedChange={setUnlockedDemo}
+          />
+        </div>
+
+        <p className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs leading-relaxed text-amber-100/90">
+          Emergency roles (Police, EMS, Fire) are{" "}
+          <strong className="font-semibold">staff-assigned after review</strong>
+          — not self-serve. Applications are reviewed by staff before any job
+          grant.
+        </p>
+
+        <SectionLabel>Departments</SectionLabel>
+        <div className="space-y-3">
+          {departments.map((dept) => {
+            const Icon = iconMap[dept.icon];
+            const applied = hasApplied(dept.id);
+            const showForm = activeId === dept.id;
+
+            return (
+              <article key={dept.id} className="purp-card overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`inline-flex size-11 items-center justify-center rounded-xl bg-gradient-to-br ${tintMap[dept.id]}`}
+                    >
+                      <Icon className="size-5" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-heading font-semibold text-white">
+                          {dept.shortName}
+                        </h3>
+                        {unlocked ? (
+                          <Badge className="gap-1 rounded-full bg-emerald-500/15 text-emerald-300">
+                            <Unlock className="size-3" />
+                            Unlocked
+                          </Badge>
+                        ) : (
+                          <Badge className="gap-1 rounded-full bg-zinc-500/20 text-zinc-300">
+                            <Lock className="size-3" />
+                            Locked
+                          </Badge>
+                        )}
+                        {applied ? (
+                          <Badge className="gap-1 rounded-full bg-violet-500/15 text-violet-200">
+                            <CheckCircle2 className="size-3" />
+                            Applied
+                          </Badge>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-sm text-zinc-400">
+                        {dept.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <ul className="mt-3 space-y-1.5 border-t border-white/5 pt-3">
+                    {dept.requirements.map((req) => (
+                      <li
+                        key={req}
+                        className="flex gap-2 text-xs text-zinc-400"
+                      >
+                        <span className="mt-1.5 size-1 shrink-0 rounded-full bg-violet-400" />
+                        {req}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    type="button"
+                    disabled={!unlocked}
+                    onClick={() =>
+                      setActiveId(showForm ? null : dept.id)
+                    }
+                    className="mt-3 h-11 w-full rounded-xl bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-40"
+                  >
+                    {unlocked
+                      ? showForm
+                        ? "Hide form"
+                        : applied
+                          ? "View / re-open form"
+                          : "Apply"
+                      : `Need ${profile.departmentHoursRequired}h playtime`}
+                  </Button>
+                </div>
+                {showForm && unlocked ? (
+                  <div className="border-t border-white/5 bg-black/20 px-1 pb-1">
+                    <ApplicationForm
+                      department={dept}
+                      onClose={() => setActiveId(null)}
+                    />
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
+        </div>
+
+        {applications.length > 0 ? (
+          <section>
+            <SectionLabel>Submitted this session</SectionLabel>
+            <ul className="space-y-2">
+              {applications.map((app) => (
+                <li key={app.id} className="purp-card p-3 text-sm">
+                  <p className="font-medium text-white">
+                    {app.departmentId.toUpperCase()} — {app.name}
+                  </p>
+                  <p className="text-xs text-zinc-500">
+                    @{app.discord} ·{" "}
+                    {new Date(app.submittedAt).toLocaleString()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </div>
+    </div>
+  );
+}
