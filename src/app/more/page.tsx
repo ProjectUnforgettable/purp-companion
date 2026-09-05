@@ -26,7 +26,7 @@ const links = [
   {
     href: "/appeals",
     label: "Ban appeals",
-    description: "Submit a mock appeal form",
+    description: "Send in an appeal draft",
     icon: FileWarning,
   },
   {
@@ -132,16 +132,16 @@ export default function MorePage() {
                 </p>
                 <p className="text-sm text-orange-300/90">{SERVER.fullName}</p>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                  Mobile companion for status, rules, join guide, read-only
-                  character sheet, department apps, and appeals. Built for a
-                  future Capacitor wrap on iOS and Android.
+                  Phone companion for live smoke-box status, rules, join tips,
+                  player peek, dept apps, and appeals. Capacitor wrap can come
+                  later for the app stores.
                 </p>
               </div>
             </div>
             <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs leading-relaxed text-orange-100/90">
-              <strong className="font-semibold">Demo mode:</strong> player,
-              economy, and status data is mocked until wired to FXServer status
-              APIs, in-game playtime clocks, and Discord bots.
+              <strong className="font-semibold">Live + fallback:</strong> Home
+              polls the smoke-box API. If the tunnel dies, we quietly show demo
+              status so the UI still works.
             </div>
             <p className="text-center text-[11px] text-zinc-600">
               Companion prototype · v0.1.0 · no secrets embedded

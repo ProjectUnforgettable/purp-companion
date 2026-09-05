@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Building2,
@@ -9,11 +10,17 @@ import {
   Gavel,
   MessageCircle,
   Radio,
+  RefreshCw,
   Shield,
   Siren,
   Users,
 } from "lucide-react";
-import { SERVER, serverStatus } from "@/lib/mock-data";
+import { SERVER } from "@/lib/mock-data";
+import { STATUS_POLL_MS } from "@/lib/api-config";
+import {
+  fetchLiveStatus,
+  type NormalizedStatus,
+} from "@/lib/purp-api";
 import {
   StatusDot,
   SectionLabel,
@@ -28,50 +35,59 @@ const heatStyles = {
   critical: "bg-red-500/20 text-red-300 border-red-500/30",
 } as const;
 
-const jobRows = [
-  {
-    key: "police",
-    label: "Police",
-    count: serverStatus.jobs.police,
-    icon: Shield,
-    tint: "text-sky-300 bg-sky-500/10",
-  },
-  {
-    key: "ems",
-    label: "EMS",
-    count: serverStatus.jobs.ems,
-    icon: Siren,
-    tint: "text-rose-300 bg-rose-500/10",
-  },
-  {
-    key: "fire",
-    label: "Fire",
-    count: serverStatus.jobs.fire,
-    icon: Building2,
-    tint: "text-orange-300 bg-orange-500/10",
-  },
-  {
-    key: "civilians",
-    label: "Civilians",
-    count: serverStatus.jobs.civilians,
-    icon: Users,
-    tint: "text-orange-200/90 bg-orange-500/10",
-  },
-] as const;
-
 export default function HomePage() {
-  const {
-    online,
-    playersOnline,
-    maxPlayers,
-    queue,
-    uptimeHours,
-    lastRestart,
-    heat,
-    heatLabel,
-    staffingNote,
-    statusFeed,
-  } = serverStatus;
+  const [status, setStatus] = useState<NormalizedStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(async (quiet = false) => {
+    if (!quiet) setLoading(true);
+    else setRefreshing(true);
+    const next = await fetchLiveStatus();
+    setStatus(next);
+    setLoading(false);
+    setRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    void load(false);
+    const id = window.setInterval(() => {
+      void load(true);
+    }, STATUS_POLL_MS);
+    return () => window.clearInterval(id);
+  }, [load]);
+
+  const s = status;
+  const jobRows = [
+    {
+      key: "police",
+      label: "Police",
+      count: s?.jobs.police ?? 0,
+      icon: Shield,
+      tint: "text-sky-300 bg-sky-500/10",
+    },
+    {
+      key: "ems",
+      label: "EMS",
+      count: s?.jobs.ems ?? 0,
+      icon: Siren,
+      tint: "text-rose-300 bg-rose-500/10",
+    },
+    {
+      key: "fire",
+      label: "Fire",
+      count: s?.jobs.fire ?? 0,
+      icon: Building2,
+      tint: "text-orange-300 bg-orange-500/10",
+    },
+    {
+      key: "civilians",
+      label: "Civilians",
+      count: s?.jobs.civilians ?? 0,
+      icon: Users,
+      tint: "text-orange-200/90 bg-orange-500/10",
+    },
+  ] as const;
 
   return (
     <div className="px-4 pt-4 pb-6">
@@ -84,63 +100,105 @@ export default function HomePage() {
       </section>
 
       <section className="animate-fade-up-delay-1 purp-card mb-4 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium">
-              <StatusDot online={online} />
-              <span className={online ? "text-emerald-300" : "text-zinc-400"}>
-                {online ? "Online" : "Offline"}
-              </span>
-            </div>
-            <p className="font-heading text-3xl font-semibold tracking-tight text-white">
-              {playersOnline}
-              <span className="text-lg text-zinc-500">/{maxPlayers}</span>
-            </p>
-            <p className="mt-0.5 text-sm text-zinc-400">Players online</p>
-          </div>
-          <div className="space-y-2 text-right">
-            <div className="rounded-xl bg-orange-500/10 px-3 py-2">
-              <p className="text-[11px] tracking-wide text-orange-300/80 uppercase">
-                Queue
-              </p>
-              <p className="font-heading text-xl font-semibold text-orange-200">
-                {queue > 0 ? queue : "—"}
-              </p>
-            </div>
-            <div
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${heatStyles[heat]}`}
-            >
-              <Flame className="size-3" />
-              {heatLabel}
-            </div>
-          </div>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="text-[11px] font-medium tracking-wide text-zinc-500 uppercase">
+            Live box status
+          </p>
+          <button
+            type="button"
+            onClick={() => void load(true)}
+            className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-zinc-300 hover:bg-white/10"
+            aria-label="Refresh status"
+          >
+            <RefreshCw
+              className={`size-3 ${refreshing ? "animate-spin" : ""}`}
+            />
+            {s?.source === "live" ? "Live" : loading ? "…" : "Mock fallback"}
+          </button>
         </div>
 
-        <p className="mt-3 rounded-xl border border-white/5 bg-black/20 px-3 py-2 text-xs text-zinc-400">
-          {staffingNote}
-        </p>
-
-        <div className="mt-4 grid grid-cols-2 gap-2 border-t border-white/5 pt-4 text-sm">
-          <div className="flex items-center gap-2 text-zinc-300">
-            <Clock3 className="size-4 text-orange-300" />
-            <div>
-              <p className="text-[11px] text-zinc-500">Uptime</p>
-              <p className="font-medium">{formatUptime(uptimeHours)}</p>
+        {loading && !s ? (
+          <p className="py-8 text-center text-sm text-zinc-500">
+            Checking the smoke box…
+          </p>
+        ) : s ? (
+          <>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium">
+                  <StatusDot online={s.online} />
+                  <span
+                    className={s.online ? "text-emerald-300" : "text-zinc-400"}
+                  >
+                    {s.online ? "Online" : "Offline"}
+                  </span>
+                </div>
+                <p className="font-heading text-3xl font-semibold tracking-tight text-white">
+                  {s.playersOnline}
+                  <span className="text-lg text-zinc-500">/{s.maxPlayers}</span>
+                </p>
+                <p className="mt-0.5 text-sm text-zinc-400">Players online</p>
+              </div>
+              <div className="space-y-2 text-right">
+                <div className="rounded-xl bg-orange-500/10 px-3 py-2">
+                  <p className="text-[11px] tracking-wide text-orange-300/80 uppercase">
+                    Queue
+                  </p>
+                  <p className="font-heading text-xl font-semibold text-orange-200">
+                    {s.queue > 0 ? s.queue : "—"}
+                  </p>
+                </div>
+                <div
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${heatStyles[s.heat]}`}
+                >
+                  <Flame className="size-3" />
+                  {s.heatLabel}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-right">
-            <p className="text-[11px] text-zinc-500">Last restart</p>
-            <p className="font-medium text-zinc-300">
-              {formatRelativeDate(lastRestart)}
+
+            <div className="mt-3">
+              <div className="mb-1.5 flex items-center justify-between text-[11px] text-zinc-500">
+                <span>Street heat</span>
+                <span className="tabular-nums text-orange-300/90">
+                  {s.heatPct}%
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-orange-600 to-amber-400 transition-all duration-500"
+                  style={{ width: `${s.heatPct}%` }}
+                />
+              </div>
+            </div>
+
+            <p className="mt-3 rounded-xl border border-white/5 bg-black/20 px-3 py-2 text-xs text-zinc-400">
+              {s.staffingNote}
             </p>
-          </div>
-        </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2 border-t border-white/5 pt-4 text-sm">
+              <div className="flex items-center gap-2 text-zinc-300">
+                <Clock3 className="size-4 text-orange-300" />
+                <div>
+                  <p className="text-[11px] text-zinc-500">Uptime</p>
+                  <p className="font-medium">{formatUptime(s.uptimeHours)}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] text-zinc-500">Last restart</p>
+                <p className="font-medium text-zinc-300">
+                  {formatRelativeDate(s.lastRestart)}
+                </p>
+              </div>
+            </div>
+          </>
+        ) : null}
       </section>
 
       <section className="animate-fade-up-delay-2 mb-5">
-        <SectionLabel>#server-status feed</SectionLabel>
+        <SectionLabel>#server-status</SectionLabel>
         <div className="purp-card divide-y divide-white/5 overflow-hidden">
-          {statusFeed.map((line) => (
+          {(s?.statusFeed ?? []).map((line) => (
             <div key={line.id} className="px-4 py-3">
               <p className="font-mono text-xs leading-relaxed text-zinc-300">
                 {line.text}
@@ -150,6 +208,11 @@ export default function HomePage() {
               </p>
             </div>
           ))}
+          {!s?.statusFeed?.length && !loading ? (
+            <p className="px-4 py-6 text-center text-sm text-zinc-500">
+              No status lines yet.
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -224,7 +287,7 @@ export default function HomePage() {
           >
             <div>
               <p className="font-medium text-white">Announcements</p>
-              <p className="text-xs text-zinc-500">News & patch notes</p>
+              <p className="text-xs text-zinc-500">News and patch notes</p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />
           </Link>
@@ -234,7 +297,7 @@ export default function HomePage() {
           >
             <div>
               <p className="font-medium text-white">Ban appeals</p>
-              <p className="text-xs text-zinc-500">Submit a mock appeal</p>
+              <p className="text-xs text-zinc-500">Send in an appeal draft</p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />
           </Link>

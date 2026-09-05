@@ -13,7 +13,10 @@ import {
 export default function JoinPage() {
   return (
     <div>
-      <PageHeader title="How to join" subtitle="Connect to PURP on FiveM" />
+      <PageHeader
+        title="How to join"
+        subtitle="Get ready for PURP — public connect later"
+      />
       <div className="space-y-5 px-4 py-4">
         <section className="animate-fade-up purp-card p-4">
           <p className="text-xs font-semibold tracking-wide text-amber-300/90 uppercase">

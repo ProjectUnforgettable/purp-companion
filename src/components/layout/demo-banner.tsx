@@ -11,9 +11,9 @@ export function DemoBanner() {
       <span className="inline-flex items-center justify-center gap-1.5">
         <Info className="size-3.5 shrink-0 opacity-80" />
         <span>
-          <strong className="font-semibold text-orange-50">Demo mode</strong>
+          <strong className="font-semibold text-orange-50">Live smoke box</strong>
           {" — "}
-          mocked until wired to FXServer + Discord.
+          status polls the tunnel; if it flakes we fall back to demo data.
         </span>
       </span>
     </div>

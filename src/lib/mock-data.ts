@@ -2,17 +2,17 @@ export const SERVER = {
   name: "PURP",
   fullName: "Project Unforgettable",
   tagline: "Premium roleplay. Unforgettable stories.",
-  /** Shown until the live cfx.re / IP is published */
-  connectLabel: "Server IP / cfx link TBD",
+  /** Smoke box is local-only — no public cfx join yet */
+  connectLabel: "Smoke box · local only",
   connectNote:
-    "Join via cfx.re once hosted. Until then, check Discord #announcements for the live connect string.",
+    "No public cfx.re join yet — this box is local/smoke-test only. Hang in Discord for when a public connect string drops.",
   discordGuildId: "1373397457177935893",
   discordUrl: "https://discord.com/channels/1373397457177935893",
-  discordNote: "Opens the PURP Discord guild (deep link). Invite TBD.",
+  discordNote: "Jumps into the PURP Discord. Invite link coming later.",
   website: "https://purp.example",
-  maxPlayers: 128,
+  maxPlayers: 48,
   controllerTip:
-    "Xbox and PlayStation controllers are supported in-game via purp-input.",
+    "Xbox and PlayStation pads work in-game through purp-input.",
 } as const;
 
 export type HeatLevel = "low" | "moderate" | "high" | "critical";
@@ -170,17 +170,17 @@ export const apiPlaceholders: ApiSnapshotPlaceholder[] = [
   {
     id: "phone",
     title: "Phone",
-    blurb: "Recent calls & messages — coming when phone APIs exist.",
+    blurb: "Calls & texts — waiting on phone APIs.",
   },
   {
     id: "bank",
     title: "Bank ledger",
-    blurb: "Transfers & invoices — coming when economy APIs exist.",
+    blurb: "Transfers & invoices — waiting on economy APIs.",
   },
   {
     id: "inventory",
     title: "Inventory",
-    blurb: "Hotbar & stash snapshot — coming when inventory APIs exist.",
+    blurb: "Hotbar & stash — waiting on inventory APIs.",
   },
 ];
 
@@ -449,33 +449,33 @@ export const joinSteps = [
     step: 1,
     title: "Install FiveM",
     detail:
-      "Download the FiveM client from the official FiveM website and install it on Windows.",
+      "Grab the official FiveM client for Windows and install it like any other game launcher.",
   },
   {
     step: 2,
-    title: "Join our Discord",
+    title: "Jump in Discord",
     detail:
-      "Open the PURP guild, verify, read #rules, and complete whitelist onboarding so staff can approve you.",
+      "Open the PURP guild, verify, skim #rules, and finish whitelist onboarding so staff can wave you through.",
   },
   {
     step: 3,
-    title: "Connect to PURP",
+    title: "Connect when it’s public",
     detail:
-      "Once hosted, join via cfx.re. Until then the connect string is TBD — watch Discord for the live IP / cfx link.",
+      "Right now it’s a smoke box / local only — no public cfx join. When a connect string exists, it’ll land in Discord.",
   },
   {
     step: 4,
-    title: "Play your character in-game",
+    title: "Make your character in-game",
     detail:
-      "Characters are created and managed in-game (read-only in this app). Department apps unlock at 10 in-game hours.",
+      "Characters live in the game, not here. This app just reads them. Dept apps open after 10 in-game hours.",
   },
 ];
 
 export const joinRequirements = [
-  "18+ (or server-stated minimum age)",
-  "Working microphone for voice RP",
+  "18+ (or whatever age staff posts)",
+  "A working mic for voice RP",
   "Discord linked + verified in the PURP guild",
-  "Whitelist approved before connecting",
-  "Willingness to follow NL/WL rules and staff direction",
-  "No active bans on linked accounts without a resolved appeal",
+  "Whitelist approved before you try to connect",
+  "Play by NL/WL rules and listen to staff",
+  "No open bans on linked accounts (or a resolved appeal)",
 ];
