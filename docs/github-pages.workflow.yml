@@ -28,7 +28,7 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: "true"
-          NEXT_PUBLIC_PURP_API_BASE: http://212.192.29.176:30120
+          NEXT_PUBLIC_PURP_API_BASE: https://manager-accessibility-rain-quantitative.trycloudflare.com
       - name: Ensure .nojekyll
         run: touch out/.nojekyll
       - uses: actions/upload-pages-artifact@v3

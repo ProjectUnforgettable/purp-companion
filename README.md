@@ -33,7 +33,7 @@ npx serve out
 
 Env: `NEXT_PUBLIC_PURP_API_BASE` (no path suffix)
 
-Default: `http://212.192.29.176:30120`
+Default: `https://manager-accessibility-rain-quantitative.trycloudflare.com`
 
 | Route | Notes |
 |-------|--------|
@@ -44,7 +44,7 @@ If the API is down, Home falls back to local status data. Profile shows a short 
 
 ## Connect
 
-Direct connect: `212.192.29.176:30120` (F8 / FiveM). GitHub Pages is HTTPS — browser may block the HTTP status API (mixed content); forms/Discord still work.
+Direct connect: `212.192.29.176:30120` (F8 / FiveM). Status API is served over HTTPS (Cloudflare tunnel) so GitHub Pages has no mixed-content block.
 
 ## Stack
 

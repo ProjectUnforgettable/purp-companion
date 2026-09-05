@@ -4,7 +4,7 @@
  */
 export const PURP_API_BASE =
   process.env.NEXT_PUBLIC_PURP_API_BASE?.replace(/\/$/, "") ||
-  "http://212.192.29.176:30120";
+  "https://manager-accessibility-rain-quantitative.trycloudflare.com";
 
 export const STATUS_POLL_MS = 20_000;
 
