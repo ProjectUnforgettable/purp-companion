@@ -271,11 +271,7 @@ export async function fetchLivePlayer(params: {
         ? String((data as { error?: string }).error ?? "")
         : "";
 
-    if (
-      res.status === 404 ||
-      err === "player_not_online" ||
-      err === "player_not_online"
-    ) {
+    if (res.status === 404 || err === "player_not_online") {
       return {
         ok: false,
         reason: "not_online",
