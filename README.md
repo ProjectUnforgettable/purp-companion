@@ -2,7 +2,7 @@
 
 Mobile web companion for the **PURP** FiveM RP server (**Project Unforgettable**).
 
-Live status, rules, join tips, Discord player lookup, department apps, and ban appeals.
+Live status, rules, join tips, Discord login + profile, department apps, and ban appeals.
 
 ## Permanent host (GitHub Pages)
 
@@ -40,7 +40,16 @@ Default: `https://manager-accessibility-rain-quantitative.trycloudflare.com`
 | `GET /api/status` | Players, queue, heat, jobs, staffing |
 | `GET /api/player?discordId=` | Online player; **404** `{ "error": "player_not_online" }` when offline |
 
-If the API is down, Home falls back to local status data. Profile shows a short offline empty state.
+If the API is down, Home falls back to local status data. Profile shows a short offline empty state when signed in but offline.
+
+## Discord login (Profile)
+
+Env: `NEXT_PUBLIC_DISCORD_LOGIN_URL` (defaults to `{API}/oauth/discord/start`)
+
+- **Log in with Discord** sends the browser to that URL.
+- OAuth callback should land on `/profile` with `login=1` + `discordId` (+ optional `username`, `avatar`). Query or hash fragment both work.
+- The app saves `localStorage["purp.session"]` (`discordId`, `username`, `avatar`) and strips those params from the URL.
+- When signed in, Profile fetches `GET /api/player?discordId=`. Log out clears the session.
 
 ## Connect
 

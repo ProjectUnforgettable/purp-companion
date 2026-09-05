@@ -8,4 +8,12 @@ export const PURP_API_BASE =
 
 export const STATUS_POLL_MS = 20_000;
 
-export const DISCORD_ID_STORAGE_KEY = "purp.discordId";
+/** Discord OAuth start URL (backend). Override with NEXT_PUBLIC_DISCORD_LOGIN_URL. */
+export const DISCORD_LOGIN_URL =
+  process.env.NEXT_PUBLIC_DISCORD_LOGIN_URL?.trim() ||
+  "https://manager-accessibility-rain-quantitative.trycloudflare.com/oauth/discord/start";
+
+export {
+  DISCORD_ID_STORAGE_KEY,
+  SESSION_STORAGE_KEY,
+} from "@/lib/session";

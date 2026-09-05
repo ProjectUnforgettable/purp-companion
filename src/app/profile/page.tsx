@@ -4,10 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import {
   BadgeCheck,
   Briefcase,
+  ChevronDown,
   Clock3,
   Landmark,
   Link2,
   Lock,
+  LogIn,
+  LogOut,
   Package,
   Phone,
   RefreshCw,
@@ -24,7 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { DISCORD_ID_STORAGE_KEY } from "@/lib/api-config";
+import { DISCORD_LOGIN_URL } from "@/lib/api-config";
 import { apiPlaceholders } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
 import {
@@ -32,21 +35,21 @@ import {
   type LivePlayer,
   type PlayerLookupResult,
 } from "@/lib/purp-api";
+import {
+  clearSession,
+  cleanAuthParamsFromUrl,
+  readAuthCallbackParams,
+  readSession,
+  sessionAvatarUrl,
+  writeSession,
+  type PurpSession,
+} from "@/lib/session";
 
 const snapshotIcons = {
   phone: Phone,
   bank: Landmark,
   inventory: Package,
 } as const;
-
-function readStoredDiscordId() {
-  if (typeof window === "undefined") return "";
-  try {
-    return localStorage.getItem(DISCORD_ID_STORAGE_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
 
 function num(v: unknown, fallback = 0) {
   return typeof v === "number" && Number.isFinite(v) ? v : fallback;
@@ -56,18 +59,19 @@ function str(v: unknown, fallback = "—") {
   return typeof v === "string" && v.trim() ? v : fallback;
 }
 
+function displayHandle(session: PurpSession) {
+  const name = session.username?.replace(/^@/, "").trim();
+  return name ? `@${name}` : "Discord account";
+}
+
 export default function ProfilePage() {
   const { profile, unlockedDemo, setUnlockedDemo } = useMockStore();
-  const [discordId, setDiscordId] = useState("");
+  const [session, setSession] = useState<PurpSession | null>(null);
   const [lookup, setLookup] = useState<PlayerLookupResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    const id = readStoredDiscordId();
-    setDiscordId(id);
-    setHydrated(true);
-  }, []);
+  const [lookupOpen, setLookupOpen] = useState(false);
+  const [lookupId, setLookupId] = useState("");
 
   const runLookup = useCallback(async (id: string) => {
     const trimmed = id.trim();
@@ -86,21 +90,34 @@ export default function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
-    const id = discordId.trim();
-    if (!id) return;
-    void runLookup(id);
-  }, [hydrated]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hydrate lookup
-
-  const onSaveAndLookup = () => {
-    const trimmed = discordId.trim();
-    try {
-      if (trimmed) localStorage.setItem(DISCORD_ID_STORAGE_KEY, trimmed);
-      else localStorage.removeItem(DISCORD_ID_STORAGE_KEY);
-    } catch {
-      /* ignore quota */
+    const fromCallback = readAuthCallbackParams();
+    if (fromCallback) {
+      writeSession(fromCallback);
+      cleanAuthParamsFromUrl();
+      setSession(fromCallback);
+      setLookupId(fromCallback.discordId);
+    } else {
+      const existing = readSession();
+      setSession(existing);
+      if (existing) setLookupId(existing.discordId);
     }
-    void runLookup(trimmed);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated || !session?.discordId) return;
+    void runLookup(session.discordId);
+  }, [hydrated, session?.discordId, runLookup]);
+
+  const onLogout = () => {
+    clearSession();
+    setSession(null);
+    setLookup(null);
+    setLookupId("");
+  };
+
+  const onAdvancedLookup = () => {
+    void runLookup(lookupId);
   };
 
   const livePlayer: LivePlayer | null =
@@ -114,54 +131,108 @@ export default function ProfilePage() {
   const unlocked = profile.playtimeHours >= required;
   const { shift, characterSheet } = profile;
 
-  const showMockSheet = !livePlayer && !offline;
+  const signedIn = Boolean(session?.discordId);
+  const avatarUrl = session ? sessionAvatarUrl(session) : undefined;
+  // Show example sheet only when signed out (not looking anyone up as self)
+  const showMockSheet = !signedIn && !livePlayer && !offline;
 
   return (
     <div>
-      <PageHeader title="Profile" subtitle="Your character" />
+      <PageHeader title="Profile" subtitle="Your account" />
       <div className="space-y-5 px-4 py-4">
         <section className="animate-fade-up purp-card space-y-3 p-4">
-          <div>
-            <p className="text-sm font-medium text-white">Discord ID</p>
-            <p className="mt-0.5 text-xs text-zinc-500">
-              See if they’re online. Saved here.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Input
-              value={discordId}
-              onChange={(e) => setDiscordId(e.target.value)}
-              placeholder="e.g. 123456789012345678"
-              inputMode="numeric"
-              className="h-11 flex-1 rounded-xl border-white/10 bg-black/30 font-mono text-sm"
-              aria-label="Discord ID"
-            />
-            <Button
-              type="button"
-              onClick={onSaveAndLookup}
-              disabled={busy}
-              className="h-11 shrink-0 rounded-xl bg-orange-600 px-4 text-white hover:bg-orange-500"
-            >
-              {busy ? (
-                <RefreshCw className="size-4 animate-spin" />
-              ) : (
-                <Search className="size-4" />
-              )}
-              Look up
-            </Button>
-          </div>
-          {lookupError ? (
-            <p className="text-xs text-amber-300/90">{lookupError}</p>
-          ) : null}
-          {lookup?.ok === true ? (
-            <p className="text-xs text-emerald-300/90">Online.</p>
-          ) : null}
+          {!hydrated ? (
+            <p className="text-sm text-zinc-500">Loading…</p>
+          ) : signedIn && session ? (
+            <>
+              <div className="flex items-start gap-3">
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatarUrl}
+                    alt=""
+                    className="size-14 rounded-2xl object-cover shadow-lg shadow-orange-950/40"
+                    width={56}
+                    height={56}
+                  />
+                ) : (
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-800 font-heading text-xl font-bold text-white shadow-lg shadow-indigo-950/40">
+                    {(session.username || "D")[0]!.toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-zinc-500">Signed in as</p>
+                  <p className="truncate font-heading text-lg font-semibold text-white">
+                    {displayHandle(session)}
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] text-zinc-600">
+                    {session.discordId}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onLogout}
+                  className="h-10 rounded-xl border-white/10 bg-black/20 text-zinc-200 hover:bg-white/5"
+                >
+                  <LogOut className="size-4" />
+                  Log out
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={busy}
+                  onClick={() => void runLookup(session.discordId)}
+                  className="h-10 rounded-xl text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+                >
+                  {busy ? (
+                    <RefreshCw className="size-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="size-4" />
+                  )}
+                  Refresh
+                </Button>
+              </div>
+              {lookupError ? (
+                <p className="text-xs text-amber-300/90">{lookupError}</p>
+              ) : null}
+              {lookup?.ok === true ? (
+                <p className="text-xs text-emerald-300/90">You’re online on the server.</p>
+              ) : null}
+              {offline ? (
+                <p className="text-xs text-zinc-500">
+                  Not in-game right now. Jump on PURP and we’ll show your sheet.
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <div>
+                <p className="text-sm font-medium text-white">Your PURP account</p>
+                <p className="mt-0.5 text-xs text-zinc-500">
+                  Log in with Discord. We’ll remember you on this device.
+                </p>
+              </div>
+              <a
+                href={DISCORD_LOGIN_URL}
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-4 text-sm font-medium text-white hover:bg-[#4752C4]"
+              >
+                <LogIn className="size-4" />
+                Log in with Discord
+              </a>
+              <p className="text-[11px] text-zinc-600">
+                Opens Discord sign-in. You’ll land back here when it’s ready.
+              </p>
+            </>
+          )}
         </section>
 
-        {offline ? (
+        {signedIn && offline ? (
           <EmptyState
             title="Not in-game"
-            description="Nobody online."
+            description="Come online on PURP to see cash, job, and playtime."
           />
         ) : null}
 
@@ -182,10 +253,10 @@ export default function ProfilePage() {
                     {str(livePlayer.characterName, "Unknown character")}
                   </h2>
                   <p className="truncate text-sm text-zinc-400">
-                    @{str(livePlayer.discordHandle, "discord")}
+                    @{str(livePlayer.discordHandle, session?.username || "discord")}
                   </p>
                   <p className="mt-1 font-mono text-[11px] text-zinc-600">
-                    {str(livePlayer.discordId, discordId.trim())}
+                    {str(livePlayer.discordId, session?.discordId || "")}
                   </p>
                 </div>
               </div>
@@ -270,7 +341,7 @@ export default function ProfilePage() {
         {showMockSheet ? (
           <>
             <p className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs text-orange-100/90">
-              Example sheet.
+              Example sheet — log in to see yours when you’re online.
             </p>
 
             <section className="animate-fade-up purp-card p-4">
@@ -430,7 +501,7 @@ export default function ProfilePage() {
           </>
         ) : null}
 
-        {!offline ? (
+        {!offline || !signedIn ? (
           <section>
             <SectionLabel>More</SectionLabel>
             <div className="space-y-2">
@@ -480,6 +551,57 @@ export default function ProfilePage() {
             />
           </section>
         ) : null}
+
+        <section className="purp-card overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setLookupOpen((o) => !o)}
+            className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left"
+            aria-expanded={lookupOpen}
+          >
+            <div>
+              <p className="text-sm font-medium text-zinc-300">
+                Lookup another player
+              </p>
+              <p className="text-[11px] text-zinc-600">Advanced — paste a Discord ID</p>
+            </div>
+            <ChevronDown
+              className={`size-4 shrink-0 text-zinc-500 transition-transform ${
+                lookupOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+          {lookupOpen ? (
+            <div className="space-y-3 border-t border-white/5 px-4 py-3">
+              <div className="flex gap-2">
+                <Input
+                  value={lookupId}
+                  onChange={(e) => setLookupId(e.target.value)}
+                  placeholder="e.g. 123456789012345678"
+                  inputMode="numeric"
+                  className="h-11 flex-1 rounded-xl border-white/10 bg-black/30 font-mono text-sm"
+                  aria-label="Discord ID to look up"
+                />
+                <Button
+                  type="button"
+                  onClick={onAdvancedLookup}
+                  disabled={busy}
+                  className="h-11 shrink-0 rounded-xl bg-orange-600 px-4 text-white hover:bg-orange-500"
+                >
+                  {busy ? (
+                    <RefreshCw className="size-4 animate-spin" />
+                  ) : (
+                    <Search className="size-4" />
+                  )}
+                  Look up
+                </Button>
+              </div>
+              <p className="text-[11px] text-zinc-600">
+                Doesn’t change who’s signed in. Just peeks at who’s online.
+              </p>
+            </div>
+          ) : null}
+        </section>
       </div>
     </div>
   );
