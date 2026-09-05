@@ -33,7 +33,7 @@ npx serve out
 
 Env: `NEXT_PUBLIC_PURP_API_BASE` (no path suffix)
 
-Default: `https://backgrounds-wrist-refrigerator-plot.trycloudflare.com`
+Default: `http://212.192.29.176:30120`
 
 | Route | Notes |
 |-------|--------|
@@ -44,7 +44,7 @@ If the API is down, Home falls back to local status data. Profile shows a short 
 
 ## Connect
 
-Local smoke test — no public join yet. No invented cfx codes.
+Direct connect: `212.192.29.176:30120` (F8 / FiveM). GitHub Pages is HTTPS — browser may block the HTTP status API (mixed content); forms/Discord still work.
 
 ## Stack
 

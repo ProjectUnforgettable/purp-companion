@@ -15,8 +15,10 @@ function applyDiscordConfigFromFile() {
   if (!fs.existsSync(configPath)) return;
   try {
     const raw = JSON.parse(fs.readFileSync(configPath, "utf8")) as {
+      guildId?: string;
       inviteUrl?: string;
       openDiscordUrl?: string;
+      channels?: Record<string, string>;
       webhooks?: Record<string, string>;
     };
     const setIfEmpty = (key: string, value?: string) => {
@@ -24,6 +26,12 @@ function applyDiscordConfigFromFile() {
       if (!process.env[key]?.trim()) process.env[key] = value.trim();
     };
     setIfEmpty("NEXT_PUBLIC_DISCORD_INVITE_URL", raw.inviteUrl);
+    // Prefer #how-to-join deep link as secondary; fall back to openDiscordUrl (#verify)
+    const howToJoin =
+      raw.guildId && raw.channels?.["how-to-join"]
+        ? `https://discord.com/channels/${raw.guildId}/${raw.channels["how-to-join"]}`
+        : undefined;
+    setIfEmpty("NEXT_PUBLIC_DISCORD_OPEN_URL", howToJoin);
     setIfEmpty("NEXT_PUBLIC_DISCORD_OPEN_URL", raw.openDiscordUrl);
     setIfEmpty(
       "NEXT_PUBLIC_DISCORD_WEBHOOK_POLICE",

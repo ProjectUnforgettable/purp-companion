@@ -1,23 +1,27 @@
 const DISCORD_INVITE_FALLBACK = "https://discord.gg/vun3Gy9mRy";
-const DISCORD_DEEP_LINK_FALLBACK =
+/** #how-to-join — preferred secondary for people already in */
+const DISCORD_HOW_TO_JOIN_FALLBACK =
+  "https://discord.com/channels/1373397457177935893/1545560543421534278";
+const DISCORD_VERIFY_FALLBACK =
   "https://discord.com/channels/1373397457177935893/1545554671425421405";
 
 export const SERVER = {
   name: "PURP",
   fullName: "Project Unforgettable",
   tagline: "Serious RP. No nonsense.",
-  /** Local smoke test — no public join yet */
-  connectLabel: "Local smoke test — no public join yet",
-  connectNote: "No cfx. Watch Discord.",
+  /** FiveM direct connect (ip:port) */
+  connectLabel: "212.192.29.176:30120",
+  connectNote: "F8 → connect 212.192.29.176:30120  ·  or paste in FiveM direct connect",
   discordGuildId: "1373397457177935893",
   /** Primary: invite so new folks land in PURP */
   discordUrl:
     process.env.NEXT_PUBLIC_DISCORD_INVITE_URL?.trim() ||
     DISCORD_INVITE_FALLBACK,
-  /** Already in? deep link to #verify */
+  /** Already in? prefer #how-to-join */
   discordDeepLink:
     process.env.NEXT_PUBLIC_DISCORD_OPEN_URL?.trim() ||
-    DISCORD_DEEP_LINK_FALLBACK,
+    DISCORD_HOW_TO_JOIN_FALLBACK,
+  discordVerifyLink: DISCORD_VERIFY_FALLBACK,
   discordNote: "PURP Discord",
   website: "https://purp.example",
   maxPlayers: 48,
@@ -464,7 +468,7 @@ export const joinSteps = [
   {
     step: 3,
     title: "Connect",
-    detail: "Local smoke test — no public join yet. Link drops in Discord later.",
+    detail: "F8 or FiveM direct connect → 212.192.29.176:30120",
   },
   {
     step: 4,

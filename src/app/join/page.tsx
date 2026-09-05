@@ -13,7 +13,7 @@ import {
 export default function JoinPage() {
   return (
     <div>
-      <PageHeader title="Join" subtitle="Local smoke test — no public join yet" />
+      <PageHeader title="Join" subtitle="Direct connect · Discord whitelist" />
       <div className="space-y-5 px-4 py-4">
         <section className="animate-fade-up purp-card p-4">
           <p className="text-xs font-semibold tracking-wide text-amber-300/90 uppercase">
@@ -45,7 +45,7 @@ export default function JoinPage() {
               rel="noopener noreferrer"
               className="text-center text-xs text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
             >
-              Already in? Jump to #verify
+              Already in? Jump to #how-to-join
             </a>
           </div>
         </section>
