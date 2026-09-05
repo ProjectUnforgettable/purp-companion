@@ -44,7 +44,9 @@ If the API is down, Home falls back to local status data. Profile shows a short 
 
 ## Discord login (Profile)
 
-Env: `NEXT_PUBLIC_DISCORD_LOGIN_URL` (defaults to `{API}/oauth/discord/start`)
+Env: `NEXT_PUBLIC_DISCORD_LOGIN_URL`
+
+Default: `https://registration-stream-contributors-inside.trycloudflare.com/oauth/discord/start`
 
 - **Log in with Discord** sends the browser to that URL.
 - OAuth callback should land on `/profile` with `login=1` + `discordId` (+ optional `username`, `avatar`). Query or hash fragment both work.

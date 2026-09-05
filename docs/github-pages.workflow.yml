@@ -29,6 +29,7 @@ jobs:
         env:
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_PURP_API_BASE: https://manager-accessibility-rain-quantitative.trycloudflare.com
+          NEXT_PUBLIC_DISCORD_LOGIN_URL: https://registration-stream-contributors-inside.trycloudflare.com/oauth/discord/start
       - name: Ensure .nojekyll
         run: touch out/.nojekyll
       - uses: actions/upload-pages-artifact@v3
