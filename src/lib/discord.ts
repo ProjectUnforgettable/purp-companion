@@ -1,6 +1,7 @@
 /**
  * Discord webhook helpers for static export.
  * Webhook URLs come from NEXT_PUBLIC_* at build time (visible in client JS).
+ * Access env vars as static process.env.NEXT_PUBLIC_* keys so Next can inline them.
  */
 
 const EMBED_COLOR = 0xc65d2e; // burnt orange
@@ -46,22 +47,19 @@ export async function postWebhook(
   }
 }
 
-function env(name: string): string | undefined {
-  const v = process.env[name]?.trim();
-  return v || undefined;
-}
-
 export function webhookForDepartment(id: DeptId): string | undefined {
   const map: Record<DeptId, string | undefined> = {
-    police: env("NEXT_PUBLIC_DISCORD_WEBHOOK_POLICE"),
-    ems: env("NEXT_PUBLIC_DISCORD_WEBHOOK_EMS"),
-    fire: env("NEXT_PUBLIC_DISCORD_WEBHOOK_FIRE"),
+    police: process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_POLICE?.trim() || undefined,
+    ems: process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_EMS?.trim() || undefined,
+    fire: process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_FIRE?.trim() || undefined,
   };
   return map[id];
 }
 
 export function webhookForAppeal(): string | undefined {
-  return env("NEXT_PUBLIC_DISCORD_WEBHOOK_BAN_APPEALS");
+  return (
+    process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_BAN_APPEALS?.trim() || undefined
+  );
 }
 
 const deptTitles: Record<DeptId, string> = {
