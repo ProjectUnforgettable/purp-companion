@@ -38,28 +38,21 @@ export default function AppealsPage() {
     setWhatHappened("");
     setEvidence("");
     toast.success("Appeal submitted", {
-      description:
-        "Mock confirmation only — staff would review this in Discord / a ticket bot.",
+      description: "Staff reviews these on Discord.",
     });
   };
 
   return (
     <div>
-      <PageHeader
-        title="Ban appeals"
-        subtitle="Honest, complete appeals only"
-        backHref="/more"
-      />
+      <PageHeader title="Appeals" subtitle="One appeal per ban" backHref="/more" />
       <div className="space-y-4 px-4 py-4">
         <p className="text-sm text-zinc-400">
-          Submit one appeal per ban. Include evidence links when you have them.
-          This prototype stores appeals in local demo state only.
+          Be honest. Add clips if you have them.
         </p>
 
         {submitted ? (
           <div className="purp-card border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
-            Your mock appeal was recorded for this session. In production, staff
-            would reply via Discord.
+            Appeal saved for this session. Staff would reply on Discord.
             <Button
               type="button"
               variant="outline"
@@ -99,7 +92,7 @@ export default function AppealsPage() {
                 value={whatHappened}
                 onChange={(e) => setWhatHappened(e.target.value)}
                 className="min-h-28 rounded-xl border-white/10 bg-white/5"
-                placeholder="Be specific. Dates, characters involved, and your side of the story."
+                placeholder="What happened — dates, who was there, your side."
                 required
               />
             </div>
@@ -123,12 +116,9 @@ export default function AppealsPage() {
         )}
 
         <section>
-          <SectionLabel>Session submissions</SectionLabel>
+          <SectionLabel>Submitted</SectionLabel>
           {appeals.length === 0 ? (
-            <EmptyState
-              title="No appeals yet"
-              description="Submitted mock appeals will show up here."
-            />
+            <EmptyState title="No appeals yet" description="Nothing submitted." />
           ) : (
             <ul className="space-y-2">
               {appeals.map((a) => (

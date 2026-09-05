@@ -75,7 +75,7 @@ export default function ProfilePage() {
       setLookup({
         ok: false,
         reason: "empty",
-        message: "Paste a Discord ID to peek at who’s online.",
+        message: "Need a Discord ID.",
       });
       return;
     }
@@ -118,17 +118,13 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <PageHeader
-        title="Profile"
-        subtitle="Live player peek + demo character sheet"
-      />
+      <PageHeader title="Profile" subtitle="Your character" />
       <div className="space-y-5 px-4 py-4">
         <section className="animate-fade-up purp-card space-y-3 p-4">
           <div>
-            <p className="text-sm font-medium text-white">Discord ID lookup</p>
+            <p className="text-sm font-medium text-white">Discord ID</p>
             <p className="mt-0.5 text-xs text-zinc-500">
-              Hits the smoke box for whoever’s online right now. Saved on this
-              phone.
+              Check if they’re online. Saved on this phone.
             </p>
           </div>
           <div className="flex gap-2">
@@ -158,14 +154,14 @@ export default function ProfilePage() {
             <p className="text-xs text-amber-300/90">{lookupError}</p>
           ) : null}
           {lookup?.ok === true ? (
-            <p className="text-xs text-emerald-300/90">Live from the smoke box.</p>
+            <p className="text-xs text-emerald-300/90">Online.</p>
           ) : null}
         </section>
 
         {offline ? (
           <EmptyState
-            title="Player not online"
-            description="That Discord ID isn’t on the smoke box right now (404). Hop in-game and try again."
+            title="Not in-game"
+            description="Nobody online with that Discord ID."
           />
         ) : null}
 
@@ -255,7 +251,7 @@ export default function ProfilePage() {
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-xs text-zinc-500">Desk / post</p>
+                  <p className="text-xs text-zinc-500">Post</p>
                   <p className="text-zinc-200">{str(livePlayer.desk)}</p>
                 </div>
                 <div>
@@ -273,9 +269,8 @@ export default function ProfilePage() {
 
         {showMockSheet ? (
           <>
-            <p className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs leading-relaxed text-orange-100/90">
-              No live player pinned yet — here’s a demo sheet so you can poke
-              around. Paste a Discord ID above when someone’s on the box.
+            <p className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs text-orange-100/90">
+              Sample sheet until you look someone up.
             </p>
 
             <section className="animate-fade-up purp-card p-4">
@@ -335,7 +330,7 @@ export default function ProfilePage() {
                 <p className="font-heading text-xl font-semibold text-white">
                   {profile.playtimeHours.toFixed(1)}h
                 </p>
-                <p className="text-xs text-zinc-400">Not wall-clock</p>
+                <p className="text-xs text-zinc-400">In-game hours</p>
               </div>
               <div className="purp-card p-3">
                 <div className="mb-2 inline-flex size-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-300">
@@ -358,7 +353,7 @@ export default function ProfilePage() {
             </section>
 
             <section className="purp-card p-4">
-              <SectionLabel>Character sheet</SectionLabel>
+              <SectionLabel>Sheet</SectionLabel>
               <dl className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <dt className="text-xs text-zinc-500">DOB</dt>
@@ -384,7 +379,7 @@ export default function ProfilePage() {
             </section>
 
             <section className="purp-card p-4">
-              <SectionLabel>Job / shift board</SectionLabel>
+              <SectionLabel>Shift</SectionLabel>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   className={
@@ -399,7 +394,7 @@ export default function ProfilePage() {
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-xs text-zinc-500">Desk / post</p>
+                  <p className="text-xs text-zinc-500">Post</p>
                   <p className="text-zinc-200">{shift.desk}</p>
                 </div>
                 <div>
@@ -414,7 +409,7 @@ export default function ProfilePage() {
             </section>
 
             <section className="animate-fade-up-delay-2 purp-card p-4">
-              <SectionLabel>Department unlock</SectionLabel>
+              <SectionLabel>Dept unlock</SectionLabel>
               <div className="mb-2 flex items-end justify-between gap-2">
                 <p className="text-sm text-zinc-300">
                   {profile.playtimeHours.toFixed(1)} / {required} in-game hours
@@ -431,7 +426,7 @@ export default function ProfilePage() {
               <p className="mt-2 text-xs text-zinc-500">
                 Police / EMS / Fire apps open after {required} hours{" "}
                 <strong className="font-medium text-zinc-400">in-game</strong>.
-                Staff hands out roles after review — nobody self-assigns.
+                Staff assigns roles after review.
               </p>
             </section>
           </>
@@ -439,7 +434,7 @@ export default function ProfilePage() {
 
         {!offline ? (
           <section>
-            <SectionLabel>Snapshots</SectionLabel>
+            <SectionLabel>More</SectionLabel>
             <div className="space-y-2">
               {apiPlaceholders.map((item) => {
                 const Icon = snapshotIcons[item.id];
@@ -466,7 +461,7 @@ export default function ProfilePage() {
         ) : (
           <div className="flex items-center justify-center gap-2 py-2 text-xs text-zinc-600">
             <UserRoundX className="size-3.5" />
-            Live sheet hidden until they’re online again.
+            Not in-game.
           </div>
         )}
 
@@ -474,11 +469,10 @@ export default function ProfilePage() {
           <section className="purp-card flex items-center justify-between gap-3 p-4">
             <div>
               <Label htmlFor="unlock-demo" className="text-sm text-white">
-                Demo: unlock applications
+                Preview unlock
               </Label>
               <p className="mt-0.5 text-xs text-zinc-500">
-                Flip mock playtime between{" "}
-                {unlockedDemo ? "7.5h" : "14.2h"} to preview locked vs unlocked.
+                Flip playtime {unlockedDemo ? "7.5h" : "14.2h"} for locked/unlocked.
               </p>
             </div>
             <Switch

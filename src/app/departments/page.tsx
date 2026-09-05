@@ -34,9 +34,9 @@ const tintMap = {
 } as const;
 
 const statusLabel = {
-  pending: "Pending staff review",
+  pending: "Pending",
   under_review: "Under review",
-  accepted: "Accepted (staff assigned)",
+  accepted: "Accepted",
   denied: "Denied",
 } as const;
 
@@ -77,7 +77,7 @@ function ApplicationForm({
     });
     toast.success("Application submitted", {
       description:
-        "Queued for staff review. Emergency roles are staff-assigned — never self-serve.",
+        "Sent. Staff will review.",
     });
     onClose();
   };
@@ -89,7 +89,7 @@ function ApplicationForm({
           Apply — {department.shortName}
         </p>
         <p className="text-xs text-zinc-500">
-          Mock form only. Submitting does not grant a job.
+          Doesn’t give you the job.
         </p>
       </div>
       <div className="space-y-1.5">
@@ -168,17 +168,17 @@ export default function DepartmentsPage() {
     <div>
       <PageHeader
         title="Departments"
-        subtitle="Apply after 10 in-game hours"
+        subtitle="10h in-game, then apply — staff decides"
         backHref="/more"
       />
       <div className="space-y-4 px-4 py-4">
         <div className="purp-card flex items-center justify-between gap-3 p-4">
           <div>
             <Label htmlFor="dept-unlock" className="text-sm text-white">
-              Demo unlock toggle
+              Preview unlock
             </Label>
             <p className="text-xs text-zinc-500">
-              Mock in-game playtime: {profile.playtimeHours.toFixed(1)}h
+              Playtime: {profile.playtimeHours.toFixed(1)}h
             </p>
           </div>
           <Switch
@@ -188,11 +188,9 @@ export default function DepartmentsPage() {
           />
         </div>
 
-        <p className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs leading-relaxed text-amber-100/90">
-          Emergency roles (Police, EMS, Fire) are{" "}
-          <strong className="font-semibold">staff-assigned after review</strong>
-          — never self-serve. Applications only open after{" "}
-          <strong className="font-semibold">10 hours in-game</strong> playtime.
+        <p className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-100/90">
+          Need <strong className="font-semibold">10h in-game</strong>. Staff
+          reviews apps and assigns Police / EMS / Fire — you don’t self-assign.
         </p>
 
         <SectionLabel>Departments</SectionLabel>
@@ -263,9 +261,9 @@ export default function DepartmentsPage() {
                       ? showForm
                         ? "Hide form"
                         : applied
-                          ? "View / re-open form"
+                          ? "View app"
                           : "Apply"
-                      : `Need ${profile.departmentHoursRequired}h in-game`}
+                      : `Need ${profile.departmentHoursRequired}h first`}
                   </Button>
                 </div>
                 {showForm && unlocked ? (
@@ -283,7 +281,7 @@ export default function DepartmentsPage() {
 
         {applications.length > 0 ? (
           <section>
-            <SectionLabel>Submitted this session</SectionLabel>
+            <SectionLabel>Your apps</SectionLabel>
             <ul className="space-y-2">
               {applications.map((app) => (
                 <li key={app.id} className="purp-card p-3 text-sm">

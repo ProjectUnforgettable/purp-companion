@@ -13,10 +13,7 @@ import {
 export default function JoinPage() {
   return (
     <div>
-      <PageHeader
-        title="How to join"
-        subtitle="Get ready for PURP — public connect later"
-      />
+      <PageHeader title="Join" subtitle="Local smoke test — no public join yet" />
       <div className="space-y-5 px-4 py-4">
         <section className="animate-fade-up purp-card p-4">
           <p className="text-xs font-semibold tracking-wide text-amber-300/90 uppercase">
@@ -81,7 +78,7 @@ export default function JoinPage() {
               <Gamepad2 className="size-5" />
             </span>
             <div>
-              <p className="font-medium text-white">Xbox + PlayStation</p>
+              <p className="font-medium text-white">Controllers</p>
               <p className="mt-0.5 text-sm text-zinc-400">
                 {SERVER.controllerTip}
               </p>

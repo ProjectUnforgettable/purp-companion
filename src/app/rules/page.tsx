@@ -29,7 +29,7 @@ export default function RulesPage() {
 
   return (
     <div>
-      <PageHeader title="Server rules" subtitle="PURP roleplay guidelines" />
+      <PageHeader title="Rules" subtitle="Read these. Seriously." />
       <div className="space-y-4 px-4 py-4">
         <div className="relative">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
@@ -44,8 +44,8 @@ export default function RulesPage() {
 
         {filtered.length === 0 ? (
           <EmptyState
-            title="No matching sections"
-            description="Try a different keyword like NLR, RDM, or gangs."
+            title="Nothing found"
+            description="Try NLR, RDM, gangs…"
           />
         ) : (
           <Accordion multiple className="purp-card overflow-hidden px-3">

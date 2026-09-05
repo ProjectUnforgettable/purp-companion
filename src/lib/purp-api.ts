@@ -135,7 +135,7 @@ export function normalizeStatus(
     pickStr(raw, "lastRestart", "restartedAt") || new Date().toISOString();
   const staffingNote =
     pickStr(raw, "staffingNote", "staffing") ||
-    "No staffing note from the box yet.";
+    "No staffing note.";
   const { heat, heatLabel, heatPct } = heatFromUnknown(raw.heat);
   const jobs = {
     police: pickNum(jobsRaw, "police"),
@@ -244,7 +244,7 @@ export async function fetchLivePlayer(params: {
     return {
       ok: false,
       reason: "empty",
-      message: "Paste a Discord ID to look someone up.",
+      message: "Need a Discord ID.",
     };
   }
 
@@ -262,7 +262,7 @@ export async function fetchLivePlayer(params: {
       return {
         ok: false,
         reason: "error",
-        message: "Player API didn’t return JSON.",
+        message: "Bad player response.",
       };
     }
 
@@ -271,11 +271,15 @@ export async function fetchLivePlayer(params: {
         ? String((data as { error?: string }).error ?? "")
         : "";
 
-    if (res.status === 404 || err === "player_not_online") {
+    if (
+      res.status === 404 ||
+      err === "player_not_online" ||
+      err === "player_not_online"
+    ) {
       return {
         ok: false,
         reason: "not_online",
-        message: "That player isn’t online on the smoke box right now.",
+        message: "Not in-game.",
       };
     }
 
@@ -300,7 +304,7 @@ export async function fetchLivePlayer(params: {
     return {
       ok: false,
       reason: "error",
-      message: "Couldn’t reach the live player API.",
+      message: "Can’t reach player API.",
     };
   }
 }

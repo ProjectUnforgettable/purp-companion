@@ -19,20 +19,20 @@ import { SERVER } from "@/lib/mock-data";
 const links = [
   {
     href: "/departments",
-    label: "Departments & applications",
-    description: "Police, EMS, Fire — 10h in-game unlock",
+    label: "Departments",
+    description: "Police · EMS · Fire — need 10h",
     icon: Shield,
   },
   {
     href: "/appeals",
-    label: "Ban appeals",
-    description: "Send in an appeal draft",
+    label: "Appeals",
+    description: "Ban appeals",
     icon: FileWarning,
   },
   {
     href: "/announcements",
     label: "Announcements",
-    description: "Changelog and server news",
+    description: "News",
     icon: Newspaper,
   },
 ] as const;
@@ -40,10 +40,10 @@ const links = [
 export default function MorePage() {
   return (
     <div>
-      <PageHeader title="More" subtitle="Settings & links" />
+      <PageHeader title="More" subtitle="Links" />
       <div className="space-y-5 px-4 py-4">
         <section>
-          <SectionLabel>Shortcuts</SectionLabel>
+          <SectionLabel>Menu</SectionLabel>
           <div className="purp-card divide-y divide-white/5 overflow-hidden">
             {links.map(({ href, label, description, icon: Icon }) => (
               <Link
@@ -78,9 +78,9 @@ export default function MorePage() {
               <MessageCircle className="size-5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-medium text-white">Open Discord</span>
+              <span className="block font-medium text-white">Discord</span>
               <span className="block text-xs text-zinc-500">
-                Guild {SERVER.discordGuildId} — {SERVER.discordNote}
+                {SERVER.discordNote}
               </span>
             </span>
             <ExternalLink className="size-4 text-zinc-600" />
@@ -94,7 +94,7 @@ export default function MorePage() {
               <Gamepad2 className="size-5" />
             </span>
             <div>
-              <p className="font-medium text-white">Xbox + PlayStation</p>
+              <p className="font-medium text-white">Controllers</p>
               <p className="mt-0.5 text-sm text-zinc-400">
                 {SERVER.controllerTip}
               </p>
@@ -109,11 +109,9 @@ export default function MorePage() {
               <Palette className="size-5" />
             </span>
             <div>
-              <p className="font-medium text-white">Dark + burnt orange</p>
+              <p className="font-medium text-white">Theme</p>
               <p className="mt-0.5 text-sm text-zinc-400">
-                PURP ships dark-only with burnt-orange accents to match framework
-                markers. Wordmark logo for now; shield/flame assets may come
-                later.
+                Dark + burnt orange. That's it.
               </p>
             </div>
           </div>
@@ -132,19 +130,12 @@ export default function MorePage() {
                 </p>
                 <p className="text-sm text-orange-300/90">{SERVER.fullName}</p>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                  Phone companion for live smoke-box status, rules, join tips,
-                  player peek, dept apps, and appeals. Capacitor wrap can come
-                  later for the app stores.
+                  Status, rules, join, profile, depts, appeals.
                 </p>
               </div>
             </div>
-            <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs leading-relaxed text-orange-100/90">
-              <strong className="font-semibold">Live + fallback:</strong> Home
-              polls the smoke-box API. If the tunnel dies, we quietly show demo
-              status so the UI still works.
-            </div>
             <p className="text-center text-[11px] text-zinc-600">
-              Companion prototype · v0.1.0 · no secrets embedded
+              PURP · v0.1.0
             </p>
           </div>
         </section>

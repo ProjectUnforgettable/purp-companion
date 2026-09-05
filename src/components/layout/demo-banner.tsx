@@ -11,9 +11,9 @@ export function DemoBanner() {
       <span className="inline-flex items-center justify-center gap-1.5">
         <Info className="size-3.5 shrink-0 opacity-80" />
         <span>
-          <strong className="font-semibold text-orange-50">Live smoke box</strong>
+          <strong className="font-semibold text-orange-50">PURP</strong>
           {" — "}
-          status polls the tunnel; if it flakes we fall back to demo data.
+          live status when the box is up.
         </span>
       </span>
     </div>

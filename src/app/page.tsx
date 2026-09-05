@@ -102,7 +102,7 @@ export default function HomePage() {
       <section className="animate-fade-up-delay-1 purp-card mb-4 p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
           <p className="text-[11px] font-medium tracking-wide text-zinc-500 uppercase">
-            Live box status
+            Status
           </p>
           <button
             type="button"
@@ -113,13 +113,13 @@ export default function HomePage() {
             <RefreshCw
               className={`size-3 ${refreshing ? "animate-spin" : ""}`}
             />
-            {s?.source === "live" ? "Live" : loading ? "…" : "Mock fallback"}
+            {s?.source === "live" ? "Live" : loading ? "…" : "Cached"}
           </button>
         </div>
 
         {loading && !s ? (
           <p className="py-8 text-center text-sm text-zinc-500">
-            Checking the smoke box…
+            Loading…
           </p>
         ) : s ? (
           <>
@@ -137,7 +137,7 @@ export default function HomePage() {
                   {s.playersOnline}
                   <span className="text-lg text-zinc-500">/{s.maxPlayers}</span>
                 </p>
-                <p className="mt-0.5 text-sm text-zinc-400">Players online</p>
+                <p className="mt-0.5 text-sm text-zinc-400">Players</p>
               </div>
               <div className="space-y-2 text-right">
                 <div className="rounded-xl bg-orange-500/10 px-3 py-2">
@@ -159,7 +159,7 @@ export default function HomePage() {
 
             <div className="mt-3">
               <div className="mb-1.5 flex items-center justify-between text-[11px] text-zinc-500">
-                <span>Street heat</span>
+                <span>Heat</span>
                 <span className="tabular-nums text-orange-300/90">
                   {s.heatPct}%
                 </span>
@@ -196,7 +196,7 @@ export default function HomePage() {
       </section>
 
       <section className="animate-fade-up-delay-2 mb-5">
-        <SectionLabel>#server-status</SectionLabel>
+        <SectionLabel>Feed</SectionLabel>
         <div className="purp-card divide-y divide-white/5 overflow-hidden">
           {(s?.statusFeed ?? []).map((line) => (
             <div key={line.id} className="px-4 py-3">
@@ -210,14 +210,14 @@ export default function HomePage() {
           ))}
           {!s?.statusFeed?.length && !loading ? (
             <p className="px-4 py-6 text-center text-sm text-zinc-500">
-              No status lines yet.
+              Nobody online.
             </p>
           ) : null}
         </div>
       </section>
 
       <section className="mb-5">
-        <SectionLabel>On shift</SectionLabel>
+        <SectionLabel>On duty</SectionLabel>
         <div className="grid grid-cols-2 gap-2">
           {jobRows.map(({ key, label, count, icon: Icon, tint }) => (
             <div key={key} className="purp-card flex items-center gap-3 p-3">
@@ -238,7 +238,7 @@ export default function HomePage() {
       </section>
 
       <section className="animate-fade-up-delay-3 mb-5">
-        <SectionLabel>Quick actions</SectionLabel>
+        <SectionLabel>Actions</SectionLabel>
         <div className="grid grid-cols-3 gap-2">
           <Link
             href="/join"
@@ -267,7 +267,7 @@ export default function HomePage() {
       </section>
 
       <section className="mb-2">
-        <SectionLabel>Explore</SectionLabel>
+        <SectionLabel>More</SectionLabel>
         <div className="space-y-2">
           <Link
             href="/departments"
@@ -276,7 +276,7 @@ export default function HomePage() {
             <div>
               <p className="font-medium text-white">Departments</p>
               <p className="text-xs text-zinc-500">
-                Police · EMS · Fire — 10h in-game unlock
+                Police · EMS · Fire — need 10h first
               </p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />
@@ -287,7 +287,7 @@ export default function HomePage() {
           >
             <div>
               <p className="font-medium text-white">Announcements</p>
-              <p className="text-xs text-zinc-500">News and patch notes</p>
+              <p className="text-xs text-zinc-500">News</p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />
           </Link>
@@ -297,7 +297,7 @@ export default function HomePage() {
           >
             <div>
               <p className="font-medium text-white">Ban appeals</p>
-              <p className="text-xs text-zinc-500">Send in an appeal draft</p>
+              <p className="text-xs text-zinc-500">Appeals</p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />
           </Link>

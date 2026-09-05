@@ -20,11 +20,7 @@ const typeLabels = {
 export default function AnnouncementsPage() {
   return (
     <div>
-      <PageHeader
-        title="Announcements"
-        subtitle="News & patch notes"
-        backHref="/"
-      />
+      <PageHeader title="Announcements" subtitle="News" backHref="/" />
       <div className="space-y-3 px-4 py-4">
         {announcements.map((item, index) => (
           <article

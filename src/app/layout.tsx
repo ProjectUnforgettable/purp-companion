@@ -27,8 +27,7 @@ export const metadata: Metadata = {
     default: "PURP | Project Unforgettable",
     template: "%s · PURP",
   },
-  description:
-    "Mobile companion for PURP | Project Unforgettable — status, rules, departments, and more.",
+  description: "PURP companion — status, rules, depts, and more.",
   applicationName: "PURP",
   appleWebApp: {
     capable: true,
