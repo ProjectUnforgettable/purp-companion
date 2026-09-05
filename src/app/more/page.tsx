@@ -78,7 +78,7 @@ export default function MorePage() {
               <MessageCircle className="size-5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-medium text-white">Discord</span>
+              <span className="block font-medium text-white">Open Discord</span>
               <span className="block text-xs text-zinc-500">
                 {SERVER.discordNote}
               </span>

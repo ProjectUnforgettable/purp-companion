@@ -254,7 +254,7 @@ export default function HomePage() {
             className="purp-press flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 py-3 text-zinc-100 hover:bg-white/10"
           >
             <MessageCircle className="size-5 text-indigo-300" />
-            <span className="text-xs font-medium">Discord</span>
+            <span className="text-xs font-medium">Open Discord</span>
           </a>
           <Link
             href="/rules"

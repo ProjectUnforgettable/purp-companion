@@ -23,7 +23,7 @@ export default function JoinPage() {
             {SERVER.connectLabel}
           </p>
           <p className="mt-1 text-xs text-zinc-500">{SERVER.connectNote}</p>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-3 flex flex-col gap-2">
             <Button
               nativeButton={false}
               render={
@@ -33,12 +33,20 @@ export default function JoinPage() {
                   rel="noopener noreferrer"
                 />
               }
-              className="h-11 flex-1 rounded-xl bg-orange-600 text-white hover:bg-orange-500"
+              className="h-11 w-full rounded-xl bg-orange-600 text-white hover:bg-orange-500"
             >
               <MessageCircle className="size-4" />
               Open Discord
               <ExternalLink className="size-3.5 opacity-60" />
             </Button>
+            <a
+              href={SERVER.discordDeepLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center text-xs text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
+            >
+              Already in? Jump to #verify
+            </a>
           </div>
         </section>
 

@@ -20,6 +20,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { departments, type Department } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
+import {
+  submitDepartmentToDiscord,
+  type DeptId,
+} from "@/lib/discord";
 
 const iconMap = {
   shield: Shield,
@@ -52,9 +56,10 @@ function ApplicationForm({
   const [discord, setDiscord] = useState(profile.discordHandle);
   const [whyJoin, setWhyJoin] = useState("");
   const [experience, setExperience] = useState("");
+  const [sending, setSending] = useState(false);
   const already = hasApplied(department.id);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (already) {
       toast.message("Already submitted", {
@@ -68,18 +73,30 @@ function ApplicationForm({
       });
       return;
     }
-    submitApplication({
-      departmentId: department.id,
+    if (sending) return;
+    setSending(true);
+    const payload = {
+      departmentId: department.id as DeptId,
       name: name.trim(),
       discord: discord.trim(),
       whyJoin: whyJoin.trim(),
       experience: experience.trim(),
-    });
-    toast.success("Application submitted", {
-      description:
-        "Sent. Staff will review.",
-    });
-    onClose();
+    };
+    try {
+      await submitDepartmentToDiscord(payload);
+      submitApplication(payload);
+      toast.success("Sent to Discord", {
+        description: "Staff will look it over.",
+      });
+      onClose();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Couldn’t reach Discord.";
+      toast.error("Didn’t send", {
+        description: msg,
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -143,9 +160,10 @@ function ApplicationForm({
         </Button>
         <Button
           type="submit"
-          className="h-11 flex-1 rounded-xl bg-orange-600 text-white hover:bg-orange-500"
+          disabled={sending}
+          className="h-11 flex-1 rounded-xl bg-orange-600 text-white hover:bg-orange-500 disabled:opacity-50"
         >
-          Submit
+          {sending ? "Sending…" : "Submit"}
         </Button>
       </div>
     </form>

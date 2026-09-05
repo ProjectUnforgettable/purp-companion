@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMockStore } from "@/lib/mock-store";
+import { submitAppealToDiscord } from "@/lib/discord";
 
 export default function AppealsPage() {
   const { profile, submitAppeal, appeals } = useMockStore();
@@ -17,8 +18,9 @@ export default function AppealsPage() {
   const [whatHappened, setWhatHappened] = useState("");
   const [evidence, setEvidence] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!discordId.trim() || !reason.trim() || whatHappened.trim().length < 20) {
       toast.error("Missing details", {
@@ -27,19 +29,32 @@ export default function AppealsPage() {
       });
       return;
     }
-    submitAppeal({
+    if (sending) return;
+    setSending(true);
+    const payload = {
       discordId: discordId.trim(),
       reason: reason.trim(),
       whatHappened: whatHappened.trim(),
       evidence: evidence.trim(),
-    });
-    setSubmitted(true);
-    setReason("");
-    setWhatHappened("");
-    setEvidence("");
-    toast.success("Appeal submitted", {
-      description: "Staff reviews these on Discord.",
-    });
+    };
+    try {
+      await submitAppealToDiscord(payload);
+      submitAppeal(payload);
+      setSubmitted(true);
+      setReason("");
+      setWhatHappened("");
+      setEvidence("");
+      toast.success("Sent to Discord", {
+        description: "Staff will reply there.",
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not reach Discord.";
+      toast.error("Did not send", {
+        description: msg,
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -52,7 +67,7 @@ export default function AppealsPage() {
 
         {submitted ? (
           <div className="purp-card border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
-            Saved. Staff replies on Discord.
+            Sent to Discord. Staff replies there.
             <Button
               type="button"
               variant="outline"
@@ -108,9 +123,10 @@ export default function AppealsPage() {
             </div>
             <Button
               type="submit"
-              className="h-11 w-full rounded-xl bg-orange-600 text-white hover:bg-orange-500"
+              disabled={sending}
+              className="h-11 w-full rounded-xl bg-orange-600 text-white hover:bg-orange-500 disabled:opacity-50"
             >
-              Submit appeal
+              {sending ? "Sending..." : "Submit appeal"}
             </Button>
           </form>
         )}

@@ -1,3 +1,7 @@
+const DISCORD_INVITE_FALLBACK = "https://discord.gg/vun3Gy9mRy";
+const DISCORD_DEEP_LINK_FALLBACK =
+  "https://discord.com/channels/1373397457177935893/1545554671425421405";
+
 export const SERVER = {
   name: "PURP",
   fullName: "Project Unforgettable",
@@ -6,7 +10,14 @@ export const SERVER = {
   connectLabel: "Local smoke test — no public join yet",
   connectNote: "No cfx. Watch Discord.",
   discordGuildId: "1373397457177935893",
-  discordUrl: "https://discord.com/channels/1373397457177935893",
+  /** Primary: invite so new folks land in PURP */
+  discordUrl:
+    process.env.NEXT_PUBLIC_DISCORD_INVITE_URL?.trim() ||
+    DISCORD_INVITE_FALLBACK,
+  /** Already in? deep link to #verify */
+  discordDeepLink:
+    process.env.NEXT_PUBLIC_DISCORD_OPEN_URL?.trim() ||
+    DISCORD_DEEP_LINK_FALLBACK,
   discordNote: "PURP Discord",
   website: "https://purp.example",
   maxPlayers: 48,
