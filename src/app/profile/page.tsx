@@ -124,7 +124,7 @@ export default function ProfilePage() {
           <div>
             <p className="text-sm font-medium text-white">Discord ID</p>
             <p className="mt-0.5 text-xs text-zinc-500">
-              Check if they’re online. Saved on this phone.
+              See if they’re online. Saved here.
             </p>
           </div>
           <div className="flex gap-2">
@@ -161,7 +161,7 @@ export default function ProfilePage() {
         {offline ? (
           <EmptyState
             title="Not in-game"
-            description="Nobody online with that Discord ID."
+            description="Nobody online."
           />
         ) : null}
 
@@ -270,7 +270,7 @@ export default function ProfilePage() {
         {showMockSheet ? (
           <>
             <p className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5 text-xs text-orange-100/90">
-              Sample sheet until you look someone up.
+              Example sheet.
             </p>
 
             <section className="animate-fade-up purp-card p-4">
@@ -424,9 +424,7 @@ export default function ProfilePage() {
               </div>
               <Progress value={progress} className="h-2.5" />
               <p className="mt-2 text-xs text-zinc-500">
-                Police / EMS / Fire apps open after {required} hours{" "}
-                <strong className="font-medium text-zinc-400">in-game</strong>.
-                Staff assigns roles after review.
+                Need {required}h in-game. Staff assigns after review.
               </p>
             </section>
           </>
@@ -469,10 +467,10 @@ export default function ProfilePage() {
           <section className="purp-card flex items-center justify-between gap-3 p-4">
             <div>
               <Label htmlFor="unlock-demo" className="text-sm text-white">
-                Preview unlock
+                Test 10h
               </Label>
               <p className="mt-0.5 text-xs text-zinc-500">
-                Flip playtime {unlockedDemo ? "7.5h" : "14.2h"} for locked/unlocked.
+                Toggle {unlockedDemo ? "7.5h" : "14.2h"}.
               </p>
             </div>
             <Switch

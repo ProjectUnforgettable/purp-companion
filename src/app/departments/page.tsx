@@ -89,7 +89,7 @@ function ApplicationForm({
           Apply — {department.shortName}
         </p>
         <p className="text-xs text-zinc-500">
-          Doesn’t give you the job.
+          Won't give you the job.
         </p>
       </div>
       <div className="space-y-1.5">
@@ -168,14 +168,14 @@ export default function DepartmentsPage() {
     <div>
       <PageHeader
         title="Departments"
-        subtitle="10h in-game, then apply — staff decides"
+        subtitle="Need 10h first. Staff reviews apps."
         backHref="/more"
       />
       <div className="space-y-4 px-4 py-4">
         <div className="purp-card flex items-center justify-between gap-3 p-4">
           <div>
             <Label htmlFor="dept-unlock" className="text-sm text-white">
-              Preview unlock
+              Test 10h
             </Label>
             <p className="text-xs text-zinc-500">
               Playtime: {profile.playtimeHours.toFixed(1)}h
@@ -190,7 +190,7 @@ export default function DepartmentsPage() {
 
         <p className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-100/90">
           Need <strong className="font-semibold">10h in-game</strong>. Staff
-          reviews apps and assigns Police / EMS / Fire — you don’t self-assign.
+          reviews apps and assigns the role.
         </p>
 
         <SectionLabel>Departments</SectionLabel>

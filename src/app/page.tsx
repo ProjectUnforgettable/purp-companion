@@ -113,7 +113,7 @@ export default function HomePage() {
             <RefreshCw
               className={`size-3 ${refreshing ? "animate-spin" : ""}`}
             />
-            {s?.source === "live" ? "Live" : loading ? "…" : "Cached"}
+            {s?.source === "live" ? "Live" : loading ? "…" : "Local"}
           </button>
         </div>
 
@@ -276,7 +276,7 @@ export default function HomePage() {
             <div>
               <p className="font-medium text-white">Departments</p>
               <p className="text-xs text-zinc-500">
-                Police · EMS · Fire — need 10h first
+                Police · EMS · Fire — need 10h
               </p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />
@@ -296,7 +296,7 @@ export default function HomePage() {
             className="purp-card purp-press flex items-center justify-between p-4"
           >
             <div>
-              <p className="font-medium text-white">Ban appeals</p>
+              <p className="font-medium text-white">Appeals</p>
               <p className="text-xs text-zinc-500">Appeals</p>
             </div>
             <ExternalLink className="size-4 text-zinc-500" />

@@ -23,7 +23,7 @@ export default function AppealsPage() {
     if (!discordId.trim() || !reason.trim() || whatHappened.trim().length < 20) {
       toast.error("Missing details", {
         description:
-          "Discord ID, ban reason, and a full account of what happened are required.",
+          "Need ID, reason, and what happened.",
       });
       return;
     }
@@ -47,12 +47,12 @@ export default function AppealsPage() {
       <PageHeader title="Appeals" subtitle="One appeal per ban" backHref="/more" />
       <div className="space-y-4 px-4 py-4">
         <p className="text-sm text-zinc-400">
-          Be honest. Add clips if you have them.
+          Be honest. Clips help.
         </p>
 
         {submitted ? (
           <div className="purp-card border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
-            Appeal saved for this session. Staff would reply on Discord.
+            Saved. Staff replies on Discord.
             <Button
               type="button"
               variant="outline"

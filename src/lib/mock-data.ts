@@ -4,7 +4,7 @@ export const SERVER = {
   tagline: "Serious RP. No nonsense.",
   /** Local smoke test — no public join yet */
   connectLabel: "Local smoke test — no public join yet",
-  connectNote: "No cfx link. Watch Discord when we go public.",
+  connectNote: "No cfx. Watch Discord.",
   discordGuildId: "1373397457177935893",
   discordUrl: "https://discord.com/channels/1373397457177935893",
   discordNote: "PURP Discord",
@@ -44,8 +44,8 @@ export const serverStatus: ServerStatus = {
   uptimeHours: 18.4,
   lastRestart: "2026-09-04T06:00:00Z",
   heat: "moderate",
-  heatLabel: "Moderate city heat",
-  staffingNote: "LEO staffing OK · EMS thin · Fire covered",
+  heatLabel: "Moderate heat",
+  staffingNote: "LEO OK · EMS thin · Fire covered",
   jobs: {
     police: 8,
     ems: 5,
@@ -70,7 +70,7 @@ export const serverStatus: ServerStatus = {
     },
     {
       id: "f4",
-      text: "Last restart ~18h ago · economy tick healthy",
+      text: "Restart ~18h ago",
       at: "2026-09-04T22:10:00Z",
     },
   ],
@@ -168,17 +168,17 @@ export const apiPlaceholders: ApiSnapshotPlaceholder[] = [
   {
     id: "phone",
     title: "Phone",
-    blurb: "Not wired yet.",
+    blurb: "Soon.",
   },
   {
     id: "bank",
     title: "Bank",
-    blurb: "Not wired yet.",
+    blurb: "Soon.",
   },
   {
     id: "inventory",
     title: "Inventory",
-    blurb: "Not wired yet.",
+    blurb: "Soon.",
   },
 ];
 

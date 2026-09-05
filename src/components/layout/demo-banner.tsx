@@ -13,7 +13,7 @@ export function DemoBanner() {
         <span>
           <strong className="font-semibold text-orange-50">PURP</strong>
           {" — "}
-          live status when the box is up.
+          live status when the server's up.
         </span>
       </span>
     </div>
