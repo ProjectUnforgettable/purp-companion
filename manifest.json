@@ -1,0 +1,24 @@
+{
+  "name": "PURP",
+  "short_name": "PURP",
+  "description": "Project Unforgettable — FiveM RP companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0a08",
+  "theme_color": "#0c0a08",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
